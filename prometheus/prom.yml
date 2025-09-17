@@ -12,7 +12,7 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          - polybot.up.railway.internal:3000
+          - polybot.railway.internal:3000
 
   # - job_name: 'example_api'
   #   scheme: http
