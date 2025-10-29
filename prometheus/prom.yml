@@ -10,6 +10,9 @@ scrape_configs:
     scrape_interval: 15s
     metrics_path: /metrics
     scheme: http
+    authorization:
+      type: Bearer
+      credentials: "${POLYBOT_METRICS_TOKEN}"
     static_configs:
       - targets:
           - polybot.railway.internal:3000
