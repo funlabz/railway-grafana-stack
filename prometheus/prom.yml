@@ -12,7 +12,7 @@ scrape_configs:
     scheme: http
     authorization:
       type: Bearer
-      credentials: "${POLYBOT_METRICS_TOKEN}"
+      credentials: fQ9mT2ZvH6kP1sXgPolyBot
     static_configs:
       - targets:
           - polybot.railway.internal:3000
