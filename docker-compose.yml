@@ -36,8 +36,8 @@ services:
 
   grafana:
     build:
-      context: ./grafana
-      dockerfile: dockerfile
+      context: .
+      dockerfile: grafana/dockerfile
     ports:
       - "3000:3000"
     volumes:
