@@ -2,8 +2,7 @@ ARG VERSION=11.5.2
 
 FROM grafana/grafana-oss:${VERSION}
 
-COPY datasources /etc/grafana/provisioning/datasources
+COPY --chown=472:472 datasources /etc/grafana/provisioning/datasources
 # copy provisioning configs and bundled dashboards
-COPY dashboards.yml /etc/grafana/provisioning/dashboards/dashboards.yml
-COPY dashboards /etc/grafana/provisioning/dashboards/builtin
-RUN chown -R 472:472 /etc/grafana/provisioning/dashboards
+COPY --chown=472:472 dashboards.yml /etc/grafana/provisioning/dashboards/dashboards.yml
+COPY --chown=472:472 dashboards /etc/grafana/provisioning/dashboards/builtin
