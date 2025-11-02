@@ -13,7 +13,7 @@ datasources:
     access: direct
     orgId: 1
     uid: grafana_lokiq
-    url: $LOKI_INTERNAL_URL
+    url: ${LOKI_INTERNAL_URL}
     user:
     database:
     basicAuth:
@@ -25,7 +25,7 @@ datasources:
     access: proxy
     orgId: 1
     uid: grafana_prometheus
-    url: $PROMETHEUS_INTERNAL_URL
+    url: ${PROMETHEUS_INTERNAL_URL}
     user:
     database:
     basicAuth:
@@ -37,10 +37,23 @@ datasources:
     access: proxy
     orgId: 1
     uid: grafana_tempo
-    url: $TEMPO_INTERNAL_URL
+    url: ${TEMPO_INTERNAL_URL}
     user:
     database:
     basicAuth:
     basicAuthUser:
     withCredentials:
+    isDefault: false
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    orgId: 1
+    uid: grafana_postgres
+    url: ${POSTGRES_DS_HOST}
+    user: ${POSTGRES_DS_USER}
+    database: ${POSTGRES_DS_DATABASE}
+    jsonData:
+      sslmode: ${POSTGRES_DS_SSLMODE}
+    secureJsonData:
+      password: ${POSTGRES_DS_PASSWORD}
     isDefault: false

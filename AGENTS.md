@@ -28,4 +28,5 @@
 
 ## Security & Configuration Tips
 - Never commit real secrets; rely on `.env` files or Railway variables and document any new parameters in `README.md`.
+- Grafana's PostgreSQL datasource reads `POSTGRES_DS_*` variables at startup; ensure any sensitive values are injected via Railway variables or local `.env` overrides rather than hardcoding.
 - When adding ports or credentials, mirror them in `docker-compose.yml` defaults and verify internal URLs align with Grafana provisioning expectations.

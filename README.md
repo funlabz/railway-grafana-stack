@@ -83,6 +83,15 @@ This allows you to update each component independently as needed.
 
 This template deploys four interconnected services:
 
+### PostgreSQL Datasource for Grafana
+- Grafana now provisions a PostgreSQL datasource automatically. Provide credentials via the following environment variables on the Grafana service (Railway variables or `docker compose` overrides):
+  - `POSTGRES_DS_HOST` (default `postgres:5432`)
+  - `POSTGRES_DS_DATABASE` (default `postgres`)
+  - `POSTGRES_DS_USER` (default `postgres`)
+  - `POSTGRES_DS_PASSWORD` (default `postgres`)
+  - `POSTGRES_DS_SSLMODE` (default `disable`)
+- Grafana uses these values during startup; update them before deploying so dashboards can query your database.
+
 ### Grafana
 - The central visualization and dashboarding platform
 - Pre-configured with connections to all other services
