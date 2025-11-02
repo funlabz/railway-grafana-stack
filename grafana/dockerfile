@@ -6,4 +6,4 @@ COPY datasources /etc/grafana/provisioning/datasources
 # copy provisioning configs and bundled dashboards
 COPY dashboards.yml /etc/grafana/provisioning/dashboards/dashboards.yml
 COPY dashboards /etc/grafana/provisioning/dashboards/builtin
-RUN chown -R grafana:grafana /etc/grafana/provisioning/dashboards
+RUN chown -R 472:472 /etc/grafana/provisioning/dashboards

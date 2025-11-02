@@ -90,6 +90,7 @@ This template deploys four interconnected services:
   - `POSTGRES_DS_USER` (default `postgres`)
   - `POSTGRES_DS_PASSWORD` (default `postgres`)
   - `POSTGRES_DS_SSLMODE` (default `disable`)
+- When running locally, copy `.env.example` to `.env` and adjust these values before starting the stack so `docker compose` passes them through to Grafana.
 - Grafana uses these values during startup; update them before deploying so dashboards can query your database.
 
 ### Grafana
