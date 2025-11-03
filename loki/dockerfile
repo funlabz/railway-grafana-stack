@@ -5,5 +5,8 @@ FROM grafana/loki:${VERSION}
 # Copy the loki.yml configuration file to the container
 COPY loki.yml /etc/loki/loki-config.yaml
 
+# Railway detects service ports from EXPOSE; publish HTTP and gRPC
+EXPOSE 3100 9095
+
 # Command to run Loki
 CMD ["-config.file=/etc/loki/loki-config.yaml"]
