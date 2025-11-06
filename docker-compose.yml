@@ -56,6 +56,7 @@ services:
       - POSTGRES_DS_PASSWORD=${POSTGRES_DS_PASSWORD:-postgres}
       - POSTGRES_DS_SSLMODE=${POSTGRES_DS_SSLMODE:-disable}
       - POLYBOT_JSON_URL=${POLYBOT_JSON_URL:-http://polybot:3000/api/status}
+      - POLYBOT_METRICS_TOKEN=${POLYBOT_METRICS_TOKEN:-changeme}
   
   example_api: 
     build:

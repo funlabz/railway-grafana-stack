@@ -64,3 +64,7 @@ datasources:
     uid: polybot_json
     url: ${POLYBOT_JSON_URL}
     isDefault: false
+    jsonData:
+      httpHeaderName1: Authorization
+    secureJsonData:
+      httpHeaderValue1: Bearer ${POLYBOT_METRICS_TOKEN}
