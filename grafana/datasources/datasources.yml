@@ -44,7 +44,7 @@ datasources:
     basicAuthUser:
     withCredentials:
     isDefault: false
-  - name: PostgreSQL
+  - name: Polybot PostgreSQL
     type: postgres
     access: proxy
     orgId: 1
