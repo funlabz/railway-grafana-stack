@@ -44,12 +44,12 @@ datasources:
     basicAuthUser:
     withCredentials:
     isDefault: false
-  - name: PostgreSQL Test
+  - name: Polybot PostgreSQL
     type: postgres
     access: proxy
     orgId: 1
     uid: grafana_postgres
-    url: ${POSTGRES_DS_HOST}
+    url: ${POSTGRES_DS_HOST}:5432
     user: ${POSTGRES_DS_USER}
     database: ${POSTGRES_DS_DATABASE}
     jsonData:
