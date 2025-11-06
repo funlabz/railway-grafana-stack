@@ -53,7 +53,8 @@ datasources:
     user: ${POSTGRES_DS_USER}
     database: ${POSTGRES_DS_DATABASE}
     jsonData:
-      sslmode: ${POSTGRES_DS_SSLMODE}
+      database: ${POSTGRES_DS_DATABASE}
+      sslmode: require
     secureJsonData:
       password: ${POSTGRES_DS_PASSWORD}
     isDefault: false
