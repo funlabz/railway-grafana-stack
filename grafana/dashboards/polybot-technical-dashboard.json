@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_POLYBOT-JSON-DASHBOARD",
-      "label": "polybot-json-dashboard",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "marcusolsson-json-datasource",
-      "pluginName": "JSON API"
-    }
-  ],
+  "__inputs": [],
   "__elements": {},
   "__requires": [
     {
@@ -98,8 +89,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "${dsPolybot}"
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -189,7 +180,7 @@
         {
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "${DS_POLYBOT-JSON-DASHBOARD}"
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -268,8 +259,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "${dsPolybot}"
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -355,7 +346,7 @@
         {
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "${DS_POLYBOT-JSON-DASHBOARD}"
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -436,8 +427,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "${dsPolybot}"
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -527,7 +518,7 @@
         {
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "${DS_POLYBOT-JSON-DASHBOARD}"
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -620,8 +611,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "${dsPolybot}"
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -710,7 +701,7 @@
         {
           "datasource": {
             "type": "marcusolsson-json-datasource",
-            "uid": "${DS_POLYBOT-JSON-DASHBOARD}"
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -795,8 +786,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "${dsPolybot}"
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
           },
           "fields": [
             {
@@ -854,11 +845,20 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "text": "Polybot JSON API",
+          "value": "polybot_json"
+        },
         "includeAll": false,
         "label": "Data source",
         "name": "dsPolybot",
-        "options": [],
+        "options": [
+          {
+            "text": "Polybot JSON API",
+            "value": "polybot_json",
+            "selected": true
+          }
+        ],
         "query": "marcusolsson-json-datasource",
         "refresh": 1,
         "type": "datasource"

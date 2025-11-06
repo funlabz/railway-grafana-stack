@@ -57,3 +57,10 @@ datasources:
     secureJsonData:
       password: ${POSTGRES_DS_PASSWORD}
     isDefault: false
+  - name: Polybot JSON API
+    type: marcusolsson-json-datasource
+    access: proxy
+    orgId: 1
+    uid: polybot_json
+    url: ${POLYBOT_JSON_URL}
+    isDefault: false
