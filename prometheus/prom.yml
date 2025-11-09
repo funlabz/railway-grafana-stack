@@ -1,15 +1,13 @@
 global:
-  scrape_interval: 15s # Default scrape interval
+  scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: prometheus
     static_configs:
-      - targets: [ 'localhost:9090' ]
+      - targets:
+          - localhost:9090
 
   - job_name: polybot
-      s
-
-  - job_name: 'polybot'
     scrape_interval: 15s
     metrics_path: /metrics
     scheme: http
@@ -19,45 +17,21 @@ scrape_configs:
     static_configs:
       - targets:
           - polybot.railway.internal:3000
-
         labels:
           job: polybot
           service_name: polybot
-          __path__: /var/log/polybot/*.log
-        pipeline_stages:
-          # Split the line into 'msg' and 'context' if context JSON exists.
-          - regex:
-              expression: '^(?P<msg>[^ ](?:.*?))(?:\\s+context\\s*:\\s*(?P<context>{.*?}))?(?:\\s+timestamp\\s*:\\s*".*")?$'
-          # Parse the JSON in the 'context' field, if present.
-          - json:
-              source: context
-              expressions:
-                className: className
-                backlog: backlog
-                batchSize: batchSize
-                maxLogRange: maxLogRange
-                intervalMs: intervalMs
-                attemptedBlocksPerSecond: attemptedBlocksPerSecond
-                blocksBehind: blocksBehind
-                blocksPerSecond: blocksPerSecond
-                blocksProcessed: blocksProcessed
-                currentBlock: currentBlock
-                latestBlock: latestBlock
-                provider: provider
-                # Add any other keys you see in your context JSON.
-          # Optionally, drop the raw context field so it doesn't clutter your logs.
-          - labels:
-              msg: ""
-  # - job_name: 'example_api'
+
+  # - job_name: example_api
   #   scheme: http
   #   static_configs:
-  #     - targets: ['example_api:9091']
+  #     - targets:
+  #         - example_api:9091
 
-  #  ? TODO: add your services here
-  # - job_name: 'your-job-name'
+  # - job_name: your-job-name
   #   scheme: https
   #   static_configs:
-  #     - targets: ['URL_GOES_HERE']
+  #     - targets:
+  #         - URL_GOES_HERE
   #   basic_auth:
   #     username: HTTP_AUTH_USERNAME_GOES_HERE
   #     password: HTTP_AUTH_PASSWORD_GOES_HERE

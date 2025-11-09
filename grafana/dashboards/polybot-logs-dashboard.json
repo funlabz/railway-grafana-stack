@@ -297,7 +297,7 @@
         {
           "direction": "backward",
           "editorMode": "code",
-          "expr": "{service_name=\"polybot\"}\n| json\n| level=\"error\"\n| line_format \"{{.message}} | err={{.attributes.context.error}} | job={{.attributes.context.jobId}} | wallet={{.attributes.context.walletId}}\"",
+          "expr": "{service_name=\"polybot\"}\n| json\n| label_format log_level=\"{{ if .level }}{{ .level }}{{ else if .severityText }}{{ .severityText }}{{ else if .severity }}{{ .severity }}{{ else }}{{ .detected_level }}{{ end }}\"\n| log_level=\"error\"\n| line_format \"{{ or .message .body }} | err={{ with .attributes }}{{ with .context }}{{ or .error .errorMessage }}{{ end }}{{ end }} | job={{ with .attributes }}{{ with .context }}{{ .jobId }}{{ end }}{{ end }} | wallet={{ with .attributes }}{{ with .context }}{{ .walletId }}{{ end }}{{ end }}\"",
           "queryType": "range",
           "refId": "A",
           "datasource": {
