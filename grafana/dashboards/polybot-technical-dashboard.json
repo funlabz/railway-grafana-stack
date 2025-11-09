@@ -1,6 +1,5 @@
 {
   "__inputs": [],
-  "__elements": {},
   "__requires": [
     {
       "type": "grafana",
@@ -15,855 +14,50 @@
       "version": "1.3.24"
     },
     {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
       "type": "panel",
       "id": "table",
       "name": "Table",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
     }
   ],
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
-        "enable": false,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": null,
-  "links": [],
-  "panels": [
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.service.environment",
-              "name": "Environment"
-            },
-            {
-              "jsonPath": "$.service.nodeVersion",
-              "name": "Node Version"
-            },
-            {
-              "jsonPath": "$.service.startedAtIso",
-              "name": "Process Started"
-            },
-            {
-              "jsonPath": "$.service.uptimeSeconds",
-              "name": "Uptime (s)"
-            },
-            {
-              "jsonPath": "$.service.cacheTtlSeconds",
-              "name": "Cache TTL (s)"
-            },
-            {
-              "jsonPath": "$.service.memory.rssMb",
-              "name": "RSS (MB)"
-            },
-            {
-              "jsonPath": "$.service.memory.heapUsedMb",
-              "name": "Heap (MB)"
-            },
-            {
-              "jsonPath": "$.service.memory.externalMb",
-              "name": "External (MB)"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Service Overview",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.trading.totalTrades",
-              "name": "Total Trades"
-            },
-            {
-              "jsonPath": "$.trading.trades24h",
-              "name": "Trades (24h)"
-            },
-            {
-              "jsonPath": "$.trading.volume24h",
-              "name": "Volume (24h)"
-            },
-            {
-              "jsonPath": "$.trading.averageTradeSize24h",
-              "name": "Avg Trade (24h)"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Trading KPIs",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 0
-      },
-      "id": 3,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Queue Failed"
-          }
-        ]
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.settlements.pendingSettlements",
-              "name": "Pending Jobs"
-            },
-            {
-              "jsonPath": "$.settlements.pendingAmountUsdc",
-              "name": "Pending Fees (USDC)"
-            },
-            {
-              "jsonPath": "$.settlements.settledToday",
-              "name": "Settled Today"
-            },
-            {
-              "jsonPath": "$.settlements.settledAmountToday",
-              "name": "Volume Today (USDC)"
-            },
-            {
-              "jsonPath": "$.settlements.queue.waiting",
-              "name": "Queue Waiting"
-            },
-            {
-              "jsonPath": "$.settlements.queue.active",
-              "name": "Queue Active"
-            },
-            {
-              "jsonPath": "$.settlements.queue.failed",
-              "name": "Queue Failed"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Settlements & Fees",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 8
-      },
-      "id": 4,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.withdrawals.pending.count",
-              "name": "Pending Count"
-            },
-            {
-              "jsonPath": "$.withdrawals.pending.amount",
-              "name": "Pending Amount (USDC)"
-            },
-            {
-              "jsonPath": "$.withdrawals.failed24h.count",
-              "name": "Failed (24h)"
-            },
-            {
-              "jsonPath": "$.withdrawals.failed24h.amount",
-              "name": "Failed Amount (USDC)"
-            },
-            {
-              "jsonPath": "$.withdrawals.queue.waiting",
-              "name": "Queue Waiting"
-            },
-            {
-              "jsonPath": "$.withdrawals.queue.failed",
-              "name": "Queue Failed"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Withdrawals",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 8
-      },
-      "id": 5,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.referrals.pendingAccruals.count",
-              "name": "Pending Accruals"
-            },
-            {
-              "jsonPath": "$.referrals.pendingAccruals.amount",
-              "name": "Pending Accruals (USDC)"
-            },
-            {
-              "jsonPath": "$.referrals.matureAccruals.count",
-              "name": "Mature Accruals"
-            },
-            {
-              "jsonPath": "$.referrals.matureAccruals.amount",
-              "name": "Mature Accruals (USDC)"
-            },
-            {
-              "jsonPath": "$.referrals.pendingClaims.count",
-              "name": "Pending Claims"
-            },
-            {
-              "jsonPath": "$.referrals.pendingClaims.amount",
-              "name": "Pending Claims (USDC)"
-            },
-            {
-              "jsonPath": "$.referrals.claims24h.count",
-              "name": "Payouts (24h)"
-            },
-            {
-              "jsonPath": "$.referrals.claims24h.amount",
-              "name": "Payout Amount (24h)"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Referrals",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 8
-      },
-      "id": 6,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.queues.withdrawal.waiting",
-              "name": "Withdrawal Waiting"
-            },
-            {
-              "jsonPath": "$.queues.withdrawal.active",
-              "name": "Withdrawal Active"
-            },
-            {
-              "jsonPath": "$.queues.withdrawal.failed",
-              "name": "Withdrawal Failed"
-            },
-            {
-              "jsonPath": "$.queues.swap.waiting",
-              "name": "Swap Waiting"
-            },
-            {
-              "jsonPath": "$.queues.swap.active",
-              "name": "Swap Active"
-            },
-            {
-              "jsonPath": "$.queues.swap.failed",
-              "name": "Swap Failed"
-            },
-            {
-              "jsonPath": "$.queues.settlement.waiting",
-              "name": "Settlement Waiting"
-            },
-            {
-              "jsonPath": "$.queues.settlement.active",
-              "name": "Settlement Active"
-            },
-            {
-              "jsonPath": "$.queues.settlement.failed",
-              "name": "Settlement Failed"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Queues Snapshot",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 16
-      },
-      "id": 7,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.marketSlug",
-              "name": "Market"
-            },
-            {
-              "jsonPath": "$.outcome",
-              "name": "Outcome"
-            },
-            {
-              "jsonPath": "$.timestamp",
-              "name": "Timestamp"
-            }
-          ],
-          "jsonPath": "$.trading.recentMarkets[*]",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Recent Markets",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Telegram Updates Total"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 205
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "id": 8,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "Telegram Updates Total"
-          }
-        ]
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.metrics.tradingOrders.total",
-              "name": "Trading Orders Total"
-            },
-            {
-              "jsonPath": "$.metrics.feeSettlementJobs.total",
-              "name": "Fee Settlement Jobs Total"
-            },
-            {
-              "jsonPath": "$.metrics.telegramUpdates.total",
-              "name": "Telegram Updates Total"
-            },
-            {
-              "jsonPath": "$.metrics.feeSettlementAmountUsd",
-              "name": "Fee Settlement Amount (USD)"
-            },
-            {
-              "jsonPath": "$.metrics.builderTrades.totalCount",
-              "name": "Builder Trades Count"
-            },
-            {
-              "jsonPath": "$.metrics.builderTrades.totalVolumeUsdc",
-              "name": "Builder Trades Volume (USDC)"
-            },
-            {
-              "jsonPath": "$.metrics.builderTrades.lastCollectionUnixSeconds",
-              "name": "Last Builder Collection (s)"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Runtime Metrics Snapshot",
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 9,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "fields": [
-            {
-              "jsonPath": "$.service.error",
-              "name": "Service"
-            },
-            {
-              "jsonPath": "$.users.error",
-              "name": "Users"
-            },
-            {
-              "jsonPath": "$.trading.error",
-              "name": "Trading"
-            },
-            {
-              "jsonPath": "$.settlements.error",
-              "name": "Settlements"
-            },
-            {
-              "jsonPath": "$.withdrawals.error",
-              "name": "Withdrawals"
-            },
-            {
-              "jsonPath": "$.referrals.error",
-              "name": "Referrals"
-            },
-            {
-              "jsonPath": "$.indexer.error",
-              "name": "Indexer"
-            },
-            {
-              "jsonPath": "$.queues.error",
-              "name": "Queues"
-            },
-            {
-              "jsonPath": "$.metrics.error",
-              "name": "Metrics"
-            }
-          ],
-          "jsonPath": "$",
-          "method": "GET",
-          "refId": "A"
-        }
-      ],
-      "title": "Section Errors (if any)",
-      "type": "table"
-    }
-  ],
+  "title": "PolyBot Command Center",
+  "uid": "polybot-command",
+  "version": 1,
   "refresh": "30s",
-  "schemaVersion": 42,
+  "style": "dark",
   "tags": [
     "polybot",
-    "ops"
+    "command-center"
   ],
+  "annotations": {
+    "list": []
+  },
   "templating": {
-    "list": [
-      {
-        "current": {
-          "text": "Polybot JSON API",
-          "value": "polybot_json"
-        },
-        "includeAll": false,
-        "label": "Data source",
-        "name": "dsPolybot",
-        "options": [
-          {
-            "text": "Polybot JSON API",
-            "value": "polybot_json",
-            "selected": true
-          }
-        ],
-        "query": "marcusolsson-json-datasource",
-        "refresh": 1,
-        "type": "datasource"
-      }
-    ]
+    "list": []
   },
   "time": {
     "from": "now-6h",
@@ -880,9 +74,476 @@
       "1h"
     ]
   },
-  "timezone": "",
-  "title": "PolyBot Operational Dashboard",
-  "uid": "polybot-tech",
-  "version": 6,
-  "weekStart": ""
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Service Overview",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "options": {
+        "orientation": "horizontal",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.service.environment",
+              "name": "Environment"
+            },
+            {
+              "jsonPath": "$.service.nodeVersion",
+              "name": "Node Version"
+            },
+            {
+              "jsonPath": "$.service.startedAtIso",
+              "name": "Started At"
+            },
+            {
+              "jsonPath": "$.service.uptimeSeconds",
+              "name": "Uptime (s)"
+            },
+            {
+              "jsonPath": "$.service.config.tradingFeeBps",
+              "name": "Trading Fee (bps)"
+            },
+            {
+              "jsonPath": "$.service.config.settlementIntervalMinutes",
+              "name": "Settlement Interval (m)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "System Utilization",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 2,
+            "gradientMode": "none",
+            "fillOpacity": 10,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafana_prometheus"
+          },
+          "expr": "clamp_max(100 * rate(process_cpu_seconds_total{app=\"polybot\"}[5m]), 100)",
+          "legendFormat": "CPU %",
+          "range": true,
+          "instant": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafana_prometheus"
+          },
+          "expr": "clamp_max(100 * process_resident_memory_bytes{app=\"polybot\"} / (1024 * 1024 * 1024 * 32), 100)",
+          "legendFormat": "Memory %",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Flow Alerts",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "grafana_postgres"
+          },
+          "format": "table",
+          "rawSql": "WITH fe AS ( SELECT \"createdAt\", \"flow\", \"stage\", \"level\", \"message\", (\"context\"::jsonb ->> 'userId')     AS user_id, (\"context\"::jsonb ->> 'marketSlug') AS market FROM \"FlowEvent\" ) SELECT fe.\"createdAt\" AS \"time\", fe.\"flow\"      AS \"Flow\", fe.user_id     AS \"UserId\", u.\"telegramUsername\" AS \"TelegramUsername\", fe.\"stage\"     AS \"Stage\", fe.\"level\"     AS \"Level\", fe.\"message\"   AS \"Details\", fe.market      AS \"Market\" FROM fe LEFT JOIN public.\"User\" u ON u.id::text = fe.user_id ORDER BY \"time\" DESC LIMIT 200;",
+          "intervalFactor": 1
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      }
+    },
+    {
+      "type": "barchart",
+      "title": "Error Volume (Logs)",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "options": {
+        "xTickLabelSpacing": -100,
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "xAxis": {
+          "mode": "time",
+          "show": true,
+          "labelSpacing": "small",
+          "placement": "bottom",
+          "align": "auto"
+        },
+        "yAxis": {
+          "scale": "linear"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#E02F44"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 0,
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "barAlignment": 0,
+            "barWidthFactor": 0.9,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "nullValueMode": "zero"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "grafana_lokiq"
+          },
+          "expr": "sum by(level) ( count_over_time({service_name=\"polybot\"} | json | level=\"error\" [$__interval]) ) or vector(0)",
+          "legendFormat": "{{level}}",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "Recent Errors (Logs)",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "showTime": true,
+        "timezone": "browser",
+        "sortOrder": "Descending",
+        "maxLines": 100
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "grafana_lokiq"
+          },
+          "expr": "{service_name=\"polybot\"} | logfmt | level=\"error\" | line_format \"{{.timestamp}} \u2014 {{if .context__error__message}}{{.context__error__message}}{{else}}{{.message}}{{end}}{{if .context__className}} ({{.context__className}}){{end}}\""
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Settlements & Withdrawals",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.settlements.pendingSettlements",
+              "name": "Pending Settlements"
+            },
+            {
+              "jsonPath": "$.settlements.pendingAmountUsdc",
+              "name": "Pending Fees (USDC)"
+            },
+            {
+              "jsonPath": "$.settlements.settledToday",
+              "name": "Settled Today"
+            },
+            {
+              "jsonPath": "$.settlements.settledAmountToday",
+              "name": "Settled Amount Today"
+            },
+            {
+              "jsonPath": "$.withdrawals.pending.count",
+              "name": "Pending Withdrawals"
+            },
+            {
+              "jsonPath": "$.withdrawals.pending.amount",
+              "name": "Pending Amount"
+            },
+            {
+              "jsonPath": "$.withdrawals.failed24h.count",
+              "name": "Failed Withdrawals (24h)"
+            },
+            {
+              "jsonPath": "$.withdrawals.failed24h.amount",
+              "name": "Failed Amount (24h)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Queues",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.queues.withdrawal.waiting",
+              "name": "Withdrawal Waiting"
+            },
+            {
+              "jsonPath": "$.queues.withdrawal.failed",
+              "name": "Withdrawal Failed"
+            },
+            {
+              "jsonPath": "$.queues.swap.waiting",
+              "name": "Swap Waiting"
+            },
+            {
+              "jsonPath": "$.queues.swap.failed",
+              "name": "Swap Failed"
+            },
+            {
+              "jsonPath": "$.queues.settlement.waiting",
+              "name": "Settlement Waiting"
+            },
+            {
+              "jsonPath": "$.queues.settlement.failed",
+              "name": "Settlement Failed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Indexer",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$.indexer.status",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.lastProcessedBlock",
+              "name": "Last Processed"
+            },
+            {
+              "jsonPath": "$.lastFinalizedBlock",
+              "name": "Last Finalized"
+            },
+            {
+              "jsonPath": "$.latestBlock",
+              "name": "Latest Chain Block"
+            },
+            {
+              "jsonPath": "$.blocksBehind",
+              "name": "Blocks Behind"
+            },
+            {
+              "jsonPath": "$.stats.blocksProcessed",
+              "name": "Blocks Processed"
+            },
+            {
+              "jsonPath": "$.stats.retriesSinceLastReport",
+              "name": "Retries"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Referrals & Metrics",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.referrals.pendingAccruals.count",
+              "name": "Pending Accruals"
+            },
+            {
+              "jsonPath": "$.referrals.pendingClaims.count",
+              "name": "Pending Claims"
+            },
+            {
+              "jsonPath": "$.referrals.claims24h.count",
+              "name": "Payouts (24h)"
+            },
+            {
+              "jsonPath": "$.metrics.tradingOrders.total",
+              "name": "Trading Orders Total"
+            },
+            {
+              "jsonPath": "$.metrics.feeSettlementJobs.total",
+              "name": "Fee Jobs Total"
+            },
+            {
+              "jsonPath": "$.metrics.telegramUpdates.total",
+              "name": "Telegram Updates"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
