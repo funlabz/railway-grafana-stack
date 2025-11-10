@@ -2661,6 +2661,136 @@
           ],
           "title": "Referral Claims (created vs completed)",
           "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "grafana_postgres"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 51
+          },
+          "id": 47,
+          "options": {
+            "cellHeight": "sm",
+            "enablePagination": true,
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.1",
+          "targets": [
+            {
+              "dataset": "railway",
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "grafana_postgres"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  ra.\"attributedAt\" AS \"Attributed At\",\n  COALESCE(ref.\"telegramUsername\", ref.\"telegramUserId\") AS \"Referrer (Telegram)\",\n  COALESCE(referee.\"telegramUsername\", referee.\"telegramUserId\") AS \"Referee (Telegram)\",\n  ra.source AS \"Source\"\nFROM public.\"ReferralAttribution\" ra\nLEFT JOIN public.\"User\" ref\n  ON ref.id = ra.\"referrerUserId\"\nLEFT JOIN public.\"User\" referee\n  ON referee.id = ra.\"refereeUserId\"\nWHERE\n  $__timeFilter(ra.\"attributedAt\")\nORDER BY\n  ra.\"attributedAt\" DESC\nLIMIT 1000;",
+              "refId": "A"
+            }
+          ],
+          "title": "Latest Referrals",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "grafana_postgres"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 51
+          },
+          "id": 48,
+          "options": {
+            "cellHeight": "sm",
+            "enablePagination": true,
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.1",
+          "targets": [
+            {
+              "dataset": "railway",
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "grafana_postgres"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH level1 AS (\n  SELECT\n    ra.\"referrerUserId\" AS user_id,\n    COUNT(*) AS level1\n  FROM public.\"ReferralAttribution\" ra\n  GROUP BY\n    ra.\"referrerUserId\"\n),\nlevel2 AS (\n  SELECT\n    parent.\"referrerUserId\" AS user_id,\n    COUNT(*) AS level2\n  FROM public.\"ReferralAttribution\" parent\n  JOIN public.\"ReferralAttribution\" child\n    ON child.\"referrerUserId\" = parent.\"refereeUserId\"\n  GROUP BY\n    parent.\"referrerUserId\"\n),\nlevel3 AS (\n  SELECT\n    grandparent.\"referrerUserId\" AS user_id,\n    COUNT(*) AS level3\n  FROM public.\"ReferralAttribution\" grandparent\n  JOIN public.\"ReferralAttribution\" parent\n    ON parent.\"referrerUserId\" = grandparent.\"refereeUserId\"\n  JOIN public.\"ReferralAttribution\" child\n    ON child.\"referrerUserId\" = parent.\"refereeUserId\"\n  GROUP BY\n    grandparent.\"referrerUserId\"\n)\nSELECT\n  COALESCE(u.\"telegramUsername\", u.\"telegramUserId\") AS \"User\",\n  COALESCE(l1.level1, 0) AS \"Level 1\",\n  COALESCE(l2.level2, 0) AS \"Level 2\",\n  COALESCE(l3.level3, 0) AS \"Level 3\",\n  COALESCE(l1.level1, 0) + COALESCE(l2.level2, 0) + COALESCE(l3.level3, 0) AS \"Total\"\nFROM public.\"User\" u\nLEFT JOIN level1 l1 ON l1.user_id = u.id\nLEFT JOIN level2 l2 ON l2.user_id = u.id\nLEFT JOIN level3 l3 ON l3.user_id = u.id\nWHERE\n  COALESCE(l1.level1, 0) + COALESCE(l2.level2, 0) + COALESCE(l3.level3, 0) > 0\nORDER BY\n  \"Total\" DESC,\n  \"Level 1\" DESC,\n  \"Level 2\" DESC,\n  \"Level 3\" DESC\nLIMIT 100;",
+              "refId": "A"
+            }
+          ],
+          "title": "Referral Leaderboard (All time)",
+          "type": "table"
         }
       ],
       "title": "Referrals",
