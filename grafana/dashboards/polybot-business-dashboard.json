@@ -1010,7 +1010,8 @@
                 "footer": {
                   "reducers": []
                 },
-                "inspect": false
+                "inspect": false,
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1038,6 +1039,7 @@
           "id": 44,
           "options": {
             "cellHeight": "sm",
+            "enablePagination": true,
             "showHeader": true
           },
           "pluginVersion": "12.2.1",
@@ -1051,7 +1053,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "SELECT\n  te.\"userId\" AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  te.\"marketSlug\" AS \"Market\",\n  COALESCE(te.\"costOrProceeds\", te.shares * te.price) AS \"Amount\",\n  te.\"timestamp\" AS \"Date\"\nFROM public.\"TradeExecution\" te\nLEFT JOIN public.\"User\" u\n  ON u.id = te.\"userId\"\nWHERE\n  $__timeFilter(te.\"timestamp\")\nORDER BY\n  te.\"timestamp\" DESC;",
+"rawSql": "SELECT\n  te.\"userId\" AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  te.\"marketSlug\" AS \"Market\",\n  COALESCE(te.\"costOrProceeds\", te.shares * te.price) AS \"Amount\",\n  te.\"timestamp\" AS \"Date\"\nFROM public.\"TradeExecution\" te\nLEFT JOIN public.\"User\" u\n  ON u.id = te.\"userId\"\nWHERE\n  $__timeFilter(te.\"timestamp\")\nORDER BY\n  te.\"timestamp\" DESC\nLIMIT 100;",
               "refId": "A"
             }
           ],
