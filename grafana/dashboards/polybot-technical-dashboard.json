@@ -1,0 +1,455 @@
+{
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.2.1"
+    },
+    {
+      "type": "datasource",
+      "id": "marcusolsson-json-datasource",
+      "name": "JSON API",
+      "version": "1.3.24"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    }
+  ],
+  "title": "PolyBot Technical Dashboard",
+  "uid": "polybot-technical-dashboard",
+  "version": 1,
+  "refresh": "30s",
+  "style": "dark",
+  "tags": [
+    "polybot",
+    "technical"
+  ],
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "15s",
+      "30s",
+      "1m",
+      "5m",
+      "10m",
+      "30m",
+      "1h"
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Service Overview",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "options": {
+        "orientation": "horizontal",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.service.environment",
+              "name": "Environment"
+            },
+            {
+              "jsonPath": "$.service.nodeVersion",
+              "name": "Node Version"
+            },
+            {
+              "jsonPath": "$.service.startedAtIso",
+              "name": "Started At"
+            },
+            {
+              "jsonPath": "$.service.uptimeSeconds",
+              "name": "Uptime (s)"
+            },
+            {
+              "jsonPath": "$.service.config.tradingFeeBps",
+              "name": "Trading Fee (bps)"
+            },
+            {
+              "jsonPath": "$.service.config.settlementIntervalMinutes",
+              "name": "Settlement Interval (m)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "System Utilization",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 2,
+            "gradientMode": "none",
+            "fillOpacity": 10,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafana_prometheus"
+          },
+          "expr": "clamp_max(100 * rate(process_cpu_seconds_total{app=\"polybot\"}[5m]), 100)",
+          "legendFormat": "CPU %",
+          "range": true,
+          "instant": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafana_prometheus"
+          },
+          "expr": "clamp_max(100 * process_resident_memory_bytes{app=\"polybot\"} / (1024 * 1024 * 1024 * 32), 100)",
+          "legendFormat": "Memory %",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Flow Alerts",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "postgres",
+            "uid": "grafana_postgres"
+          },
+          "format": "table",
+          "rawSql": "WITH fe AS ( SELECT \"createdAt\", \"flow\", \"stage\", \"level\", \"message\", (\"context\"::jsonb ->> 'userId')     AS user_id, (\"context\"::jsonb ->> 'marketSlug') AS market FROM \"FlowEvent\" ) SELECT fe.\"createdAt\" AS \"time\", fe.\"flow\"      AS \"Flow\", fe.user_id     AS \"UserId\", u.\"telegramUsername\" AS \"TelegramUsername\", fe.\"stage\"     AS \"Stage\", fe.\"level\"     AS \"Level\", fe.\"message\"   AS \"Details\", fe.market      AS \"Market\" FROM fe LEFT JOIN public.\"User\" u ON u.id::text = fe.user_id ORDER BY \"time\" DESC LIMIT 200;",
+          "intervalFactor": 1
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      }
+    },
+    {
+      "type": "barchart",
+      "title": "Error Volume (Logs)",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "options": {
+        "xTickLabelSpacing": -100,
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "xAxis": {
+          "mode": "time",
+          "show": true,
+          "labelSpacing": "small",
+          "placement": "bottom",
+          "align": "auto"
+        },
+        "yAxis": {
+          "scale": "linear"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#E02F44"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 0,
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "barAlignment": 0,
+            "barWidthFactor": 0.9,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "nullValueMode": "zero"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "grafana_lokiq"
+          },
+          "expr": "sum by(level) ( count_over_time({service_name=\"polybot\"} | level=\"error\" [$__interval]) ) or vector(0)",
+          "legendFormat": "{{level}}",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "Recent Errors (Logs)",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "showTime": true,
+        "timezone": "browser",
+        "sortOrder": "Descending",
+        "maxLines": 100
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "grafana_lokiq"
+          },
+          "expr": "{service_name=\"polybot\"} | level=\"error\""
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Settlements & Withdrawals",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.settlements.pendingSettlements",
+              "name": "Pending Settlements"
+            },
+            {
+              "jsonPath": "$.settlements.pendingAmountUsdc",
+              "name": "Pending Fees (USDC)"
+            },
+            {
+              "jsonPath": "$.settlements.settledToday",
+              "name": "Settled Today"
+            },
+            {
+              "jsonPath": "$.settlements.settledAmountToday",
+              "name": "Settled Amount Today"
+            },
+            {
+              "jsonPath": "$.withdrawals.pending.count",
+              "name": "Pending Withdrawals"
+            },
+            {
+              "jsonPath": "$.withdrawals.pending.amount",
+              "name": "Pending Amount"
+            },
+            {
+              "jsonPath": "$.withdrawals.failed24h.count",
+              "name": "Failed Withdrawals (24h)"
+            },
+            {
+              "jsonPath": "$.withdrawals.failed24h.amount",
+              "name": "Failed Amount (24h)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Queues",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "marcusolsson-json-datasource",
+            "uid": "polybot_json"
+          },
+          "jsonPath": "$",
+          "method": "GET",
+          "fields": [
+            {
+              "jsonPath": "$.queues.withdrawal.waiting",
+              "name": "Withdrawal Waiting"
+            },
+            {
+              "jsonPath": "$.queues.withdrawal.failed",
+              "name": "Withdrawal Failed"
+            },
+            {
+              "jsonPath": "$.queues.swap.waiting",
+              "name": "Swap Waiting"
+            },
+            {
+              "jsonPath": "$.queues.swap.failed",
+              "name": "Swap Failed"
+            },
+            {
+              "jsonPath": "$.queues.settlement.waiting",
+              "name": "Settlement Waiting"
+            },
+            {
+              "jsonPath": "$.queues.settlement.failed",
+              "name": "Settlement Failed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

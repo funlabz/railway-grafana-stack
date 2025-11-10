@@ -13,4 +13,4 @@ RUN mkdir -p /loki/chunks /loki/tsdb-index /loki/tsdb-cache && \
 EXPOSE 3100 9095
 
 # Command to run Loki
-CMD ["-config.file=/etc/loki/loki-config.yaml"]
+CMD ["-config.file=/etc/loki/loki-config.yaml", "-log.level=warn"]

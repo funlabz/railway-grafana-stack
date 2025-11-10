@@ -44,16 +44,28 @@ datasources:
     basicAuthUser:
     withCredentials:
     isDefault: false
-  - name: PostgreSQL
+  - name: Polybot PostgreSQL
     type: postgres
     access: proxy
     orgId: 1
     uid: grafana_postgres
-    url: ${POSTGRES_DS_HOST}
+    url: ${POSTGRES_DS_HOST}:5432
     user: ${POSTGRES_DS_USER}
     database: ${POSTGRES_DS_DATABASE}
     jsonData:
-      sslmode: ${POSTGRES_DS_SSLMODE}
+      database: ${POSTGRES_DS_DATABASE}
+      sslmode: require
     secureJsonData:
       password: ${POSTGRES_DS_PASSWORD}
     isDefault: false
+  - name: Polybot JSON API
+    type: marcusolsson-json-datasource
+    access: proxy
+    orgId: 1
+    uid: polybot_json
+    url: ${POLYBOT_JSON_URL}
+    isDefault: false
+    jsonData:
+      httpHeaderName1: Authorization
+    secureJsonData:
+      httpHeaderValue1: Bearer ${POLYBOT_METRICS_TOKEN}
