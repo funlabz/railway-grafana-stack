@@ -44,14 +44,14 @@
       "version": ""
     }
   ],
-  "title": "PolyBot Command Center",
-  "uid": "polybot-command",
+  "title": "PolyBot Technical Dashboard",
+  "uid": "polybot-technical-dashbaord",
   "version": 1,
   "refresh": "30s",
   "style": "dark",
   "tags": [
     "polybot",
-    "command-center"
+    "technical"
   ],
   "annotations": {
     "list": []
@@ -312,7 +312,7 @@
             "type": "loki",
             "uid": "grafana_lokiq"
           },
-          "expr": "sum by(level) ( count_over_time({service_name=\"polybot\"} | json | level=\"error\" [$__interval]) ) or vector(0)",
+          "expr": "sum by(level) ( count_over_time({service_name=\"polybot\"} | level=\"error\" [$__interval]) ) or vector(0)",
           "legendFormat": "{{level}}",
           "range": true,
           "instant": false
@@ -345,7 +345,7 @@
             "type": "loki",
             "uid": "grafana_lokiq"
           },
-          "expr": "{service_name=\"polybot\"} | logfmt | level=\"error\" | line_format \"{{.timestamp}} \u2014 {{if .context__error__message}}{{.context__error__message}}{{else}}{{.message}}{{end}}{{if .context__className}} ({{.context__className}}){{end}}\""
+          "expr": "{service_name=\"polybot\"} | level=\"error\""
         }
       ]
     },
@@ -446,100 +446,6 @@
             {
               "jsonPath": "$.queues.settlement.failed",
               "name": "Settlement Failed"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "title": "Indexer",
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 40
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "jsonPath": "$.indexer.status",
-          "method": "GET",
-          "fields": [
-            {
-              "jsonPath": "$.lastProcessedBlock",
-              "name": "Last Processed"
-            },
-            {
-              "jsonPath": "$.lastFinalizedBlock",
-              "name": "Last Finalized"
-            },
-            {
-              "jsonPath": "$.latestBlock",
-              "name": "Latest Chain Block"
-            },
-            {
-              "jsonPath": "$.blocksBehind",
-              "name": "Blocks Behind"
-            },
-            {
-              "jsonPath": "$.stats.blocksProcessed",
-              "name": "Blocks Processed"
-            },
-            {
-              "jsonPath": "$.stats.retriesSinceLastReport",
-              "name": "Retries"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "title": "Referrals & Metrics",
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 40
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "marcusolsson-json-datasource",
-            "uid": "polybot_json"
-          },
-          "jsonPath": "$",
-          "method": "GET",
-          "fields": [
-            {
-              "jsonPath": "$.referrals.pendingAccruals.count",
-              "name": "Pending Accruals"
-            },
-            {
-              "jsonPath": "$.referrals.pendingClaims.count",
-              "name": "Pending Claims"
-            },
-            {
-              "jsonPath": "$.referrals.claims24h.count",
-              "name": "Payouts (24h)"
-            },
-            {
-              "jsonPath": "$.metrics.tradingOrders.total",
-              "name": "Trading Orders Total"
-            },
-            {
-              "jsonPath": "$.metrics.feeSettlementJobs.total",
-              "name": "Fee Jobs Total"
-            },
-            {
-              "jsonPath": "$.metrics.telegramUpdates.total",
-              "name": "Telegram Updates"
             }
           ]
         }

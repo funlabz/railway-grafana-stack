@@ -2682,7 +2682,7 @@
     }
   ],
   "schemaVersion": 42,
-  "tags": [],
+  "tags": ["polybot", "business"],
   "templating": {
     "list": []
   },
@@ -2692,8 +2692,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Polybot business V2",
-  "uid": "po77d5g",
+  "title": "Polybot Business Dashboard",
+  "uid": "polybot-business-dashbaord",
   "version": 5,
   "weekStart": "",
   "id": null
