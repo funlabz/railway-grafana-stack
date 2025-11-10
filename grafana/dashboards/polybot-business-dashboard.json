@@ -299,7 +299,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT SUM(\"feeAmount\") FROM \"FeeAccrual\"",
+          "rawSql": "SELECT SUM(\"feeAmount\") FROM \"FeeAccrual\" WHERE status = 'SETTLED'",
           "refId": "A",
           "sql": {
             "columns": [
