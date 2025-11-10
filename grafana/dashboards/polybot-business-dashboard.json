@@ -1164,6 +1164,71 @@
             "h": 8,
             "w": 24,
             "x": 0,
+            "y": 53
+          },
+          "id": 49,
+          "options": {
+            "cellHeight": "sm",
+            "enablePagination": true,
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.1",
+          "targets": [
+            {
+              "dataset": "railway",
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "grafana_postgres"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  te.\"userId\" AS \"UserId\",\n  COALESCE(u.\"telegramUsername\", u.\"telegramUserId\") AS \"TelegramUsername\",\n  SUM(ABS(COALESCE(te.\"costOrProceeds\", te.shares * te.price))) AS \"Total Trades Amount\"\nFROM public.\"TradeExecution\" te\nLEFT JOIN public.\"User\" u\n  ON u.id = te.\"userId\"\nWHERE\n  $__timeFilter(te.\"timestamp\")\nGROUP BY\n  te.\"userId\",\n  COALESCE(u.\"telegramUsername\", u.\"telegramUserId\")\nORDER BY\n  \"Total Trades Amount\" DESC\nLIMIT 100;",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Traders",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "grafana_postgres"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
             "y": 45
           },
           "id": 44,
