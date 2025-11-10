@@ -45,7 +45,7 @@
     }
   ],
   "title": "PolyBot Technical Dashboard",
-  "uid": "polybot-technical-dashbaord",
+  "uid": "polybot-technical-dashboard",
   "version": 1,
   "refresh": "30s",
   "style": "dark",
