@@ -598,6 +598,71 @@
           ],
           "title": "24h Fees",
           "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "grafana_postgres"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 45,
+          "options": {
+            "cellHeight": "sm",
+            "enablePagination": true,
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.1",
+          "targets": [
+            {
+              "dataset": "railway",
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "grafana_postgres"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  u.id AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  u.\"telegramUserId\" AS \"TelegramUserId\",\n  u.\"createdAt\" AS \"Date\"\nFROM public.\"User\" u\nWHERE\n  u.\"createdAt\" >= date_trunc('day', NOW())\nORDER BY\n  u.\"createdAt\" DESC\nLIMIT 1000;",
+              "refId": "A"
+            }
+          ],
+          "title": "New Users (Today)",
+          "type": "table"
         }
       ],
       "title": "24h Stats",
@@ -1053,7 +1118,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-"rawSql": "SELECT\n  te.\"userId\" AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  te.\"marketSlug\" AS \"Market\",\n  COALESCE(te.\"costOrProceeds\", te.shares * te.price) AS \"Amount\",\n  te.\"timestamp\" AS \"Date\"\nFROM public.\"TradeExecution\" te\nLEFT JOIN public.\"User\" u\n  ON u.id = te.\"userId\"\nWHERE\n  $__timeFilter(te.\"timestamp\")\nORDER BY\n  te.\"timestamp\" DESC\nLIMIT 100;",
+              "rawSql": "SELECT\n  te.\"userId\" AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  te.\"marketSlug\" AS \"Market\",\n  COALESCE(te.\"costOrProceeds\", te.shares * te.price) AS \"Amount\",\n  te.\"timestamp\" AS \"Date\"\nFROM public.\"TradeExecution\" te\nLEFT JOIN public.\"User\" u\n  ON u.id = te.\"userId\"\nWHERE\n  $__timeFilter(te.\"timestamp\")\nORDER BY\n  te.\"timestamp\" DESC\nLIMIT 1000;",
               "refId": "A"
             }
           ],
@@ -1264,6 +1329,71 @@
           ],
           "title": "Avg Order Size (30d)",
           "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "grafana_postgres"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 45
+          },
+          "id": 46,
+          "options": {
+            "cellHeight": "sm",
+            "enablePagination": true,
+            "showHeader": true
+          },
+          "pluginVersion": "12.2.1",
+          "targets": [
+            {
+              "dataset": "railway",
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "grafana_postgres"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT\n  u.id AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  u.\"telegramUserId\" AS \"TelegramUserId\",\n  u.\"createdAt\" AS \"Date\"\nFROM public.\"User\" u\nWHERE\n  u.\"createdAt\" >= NOW() - INTERVAL '30 days'\nORDER BY\n  u.\"createdAt\" DESC\nLIMIT 1000;",
+              "refId": "A"
+            }
+          ],
+          "title": "New Users (30d)",
+          "type": "table"
         }
       ],
       "title": "Trading Charts (30d)",
