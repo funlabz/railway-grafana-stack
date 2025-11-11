@@ -657,7 +657,7 @@
               "editorMode": "code",
               "format": "table",
               "rawQuery": true,
-              "rawSql": "SELECT\n  u.id AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  u.\"telegramUserId\" AS \"TelegramUserId\",\n  u.\"createdAt\" AS \"Date\"\nFROM public.\"User\" u\nWHERE\n  u.\"createdAt\" >= date_trunc('day', NOW())\nORDER BY\n  u.\"createdAt\" DESC\nLIMIT 1000;",
+              "rawSql": "SELECT\n  u.id AS \"UserId\",\n  u.\"telegramUsername\" AS \"TelegramUsername\",\n  u.\"telegramUserId\" AS \"TelegramUserId\",\n  u.\"createdAt\" AS \"Date\"\nFROM public.\"User\" u\nWHERE\n  u.\"createdAt\" >= NOW() - INTERVAL '24 hours'\nORDER BY\n  u.\"createdAt\" DESC\nLIMIT 1000;",
               "refId": "A"
             }
           ],
