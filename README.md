@@ -39,11 +39,13 @@ This template is perfect for teams who need a comprehensive observability soluti
 | `GF_SECURITY_ADMIN_USER` | Username for the Grafana admin account | Required input |
 | `GF_SECURITY_ADMIN_PASSWORD` | Password for the Grafana admin account | Auto-generated secure string |
 | `GF_DEFAULT_INSTANCE_NAME` | Name of your Grafana instance | `Grafana on Railway` |
-| `GF_INSTALL_PLUGINS` | Comma-separated list of Grafana plugins to install | `marcusolsson-json-datasource,grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel` |
+| `GF_INSTALL_PLUGINS` | Comma-separated list of Grafana plugins to install | `marcusolsson-json-datasource,grafana-clock-panel` |
 | `POLYBOT_JSON_URL` | Base URL for the Polybot JSON API datasource | `http://polybot:3000/api/status` |
 | `POLYBOT_METRICS_TOKEN` | Bearer token sent as Authorization header to Polybot JSON API | `changeme` |
 | `POLYBOT_SLACK_WEBHOOK_URL` | Incoming webhook URL used by the bundled Slack contact point | `https://hooks.slack.com/services/your/webhook/here` |
 | `POLYBOT_SLACK_CHANNEL` | Slack destination (for example `#polybot-alerts`) for provisioned alerts | `#polybot-alerts` |
+
+> Grafana 12+ no longer loads legacy Angular plugins, so the default `GF_INSTALL_PLUGINS` list ships only React-based plugins. If you still need Angular plugins (for example `grafana-worldmap-panel`), enable Grafana's Angular compatibility flag manually and add them back to the variable.
 
 ### Internal Service URLs
 

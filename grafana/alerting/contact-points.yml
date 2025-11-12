@@ -17,5 +17,5 @@ contactPoints:
         type: slack
         disableResolveMessage: false
         settings:
-          recipient: ${POLYBOT_SLACK_CHANNEL}
-          url: ${POLYBOT_SLACK_WEBHOOK_URL}
+          recipient: "${POLYBOT_SLACK_CHANNEL}"
+          url: "${POLYBOT_SLACK_WEBHOOK_URL}"
