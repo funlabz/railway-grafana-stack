@@ -1,0 +1,158 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: Built-in Prometheus Alerts
+    folder: Observability
+    interval: 1m
+    rules:
+      - uid: builtin_example_api_5xx
+        title: Example API 5xx Rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: grafana_prometheus
+            model:
+              datasource:
+                type: prometheus
+                uid: grafana_prometheus
+              expr: sum(rate(http_requests_total{job="example_api",status=~"5.."}[5m]))
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              type: reduce
+              reducer: last
+              settings:
+                mode: replace
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              type: math
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.5
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    type: last
+                  type: query
+              intervalMs: 1000
+              maxDataPoints: 43200
+        noDataState: NoData
+        executionErrorState: Error
+        for: 2m
+        annotations:
+          summary: Example API is producing elevated 5xx responses
+        labels:
+          severity: warning
+        isPaused: false
+  - orgId: 1
+    name: Polybot Flow Alerts
+    folder: Observability
+    interval: 1m
+    rules:
+      - uid: builtin_polybot_flow_events
+        title: Polybot Flow Event Detected
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: grafana_postgres
+            model:
+              datasource:
+                type: postgres
+                uid: grafana_postgres
+              format: time_series
+              intervalMs: 1000
+              maxDataPoints: 43200
+              rawSql: |
+                SELECT
+                  $__timeGroupAlias("createdAt", '1m'),
+                  COALESCE("flow", 'unknown') AS metric,
+                  COUNT(*) FILTER (WHERE upper("level") IN ('WARNING','ERROR','CRITICAL'))::double precision AS value
+                FROM "FlowEvent"
+                WHERE $__timeFilter("createdAt")
+                  AND upper("level") IN ('WARNING','ERROR','CRITICAL')
+                GROUP BY 1, 2
+                ORDER BY 1
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              type: reduce
+              reducer: last
+              settings:
+                mode: replace
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              type: math
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    type: last
+                  type: query
+              intervalMs: 1000
+              maxDataPoints: 43200
+        noDataState: OK
+        executionErrorState: Error
+        for: 0s
+        annotations:
+          summary: New Polybot flow events with warning/error levels detected in the last 5 minutes
+        labels:
+          severity: warning
+          component: polybot-flow
+        isPaused: false

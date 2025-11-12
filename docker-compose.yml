@@ -57,6 +57,8 @@ services:
       - POSTGRES_DS_SSLMODE=${POSTGRES_DS_SSLMODE:-disable}
       - POLYBOT_JSON_URL=${POLYBOT_JSON_URL:-http://polybot:3000/api/status}
       - POLYBOT_METRICS_TOKEN=${POLYBOT_METRICS_TOKEN:-changeme}
+      - POLYBOT_SLACK_WEBHOOK_URL=${POLYBOT_SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/your/webhook/here}
+      - "POLYBOT_SLACK_CHANNEL=${POLYBOT_SLACK_CHANNEL:-#polybot-alerts}"
   
   example_api: 
     build:

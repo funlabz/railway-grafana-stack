@@ -1,0 +1,21 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: example-webhook
+    receivers:
+      - uid: example_webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          httpMethod: POST
+          url: http://example_api:9091/alerts
+  - orgId: 1
+    name: example-slack
+    receivers:
+      - uid: example_slack
+        type: slack
+        disableResolveMessage: false
+        settings:
+          recipient: ${POLYBOT_SLACK_CHANNEL}
+          url: ${POLYBOT_SLACK_WEBHOOK_URL}

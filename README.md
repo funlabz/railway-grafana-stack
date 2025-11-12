@@ -42,6 +42,8 @@ This template is perfect for teams who need a comprehensive observability soluti
 | `GF_INSTALL_PLUGINS` | Comma-separated list of Grafana plugins to install | `marcusolsson-json-datasource,grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel` |
 | `POLYBOT_JSON_URL` | Base URL for the Polybot JSON API datasource | `http://polybot:3000/api/status` |
 | `POLYBOT_METRICS_TOKEN` | Bearer token sent as Authorization header to Polybot JSON API | `changeme` |
+| `POLYBOT_SLACK_WEBHOOK_URL` | Incoming webhook URL used by the bundled Slack contact point | `https://hooks.slack.com/services/your/webhook/here` |
+| `POLYBOT_SLACK_CHANNEL` | Slack destination (for example `#polybot-alerts`) for provisioned alerts | `#polybot-alerts` |
 
 ### Internal Service URLs
 
@@ -101,6 +103,11 @@ This template deploys four interconnected services:
 - Persistent volume for storing dashboards, users, and configurations
 - Comes with useful plugins pre-installed
 - Exposes internal URLs for other Railway services to connect to Loki, Prometheus, and Tempo
+
+#### Embedded Alerting
+Grafana now provisions unified alerting resources from `grafana/alerting`. Update `alerts.yml`, `contact-points.yml`, and `notification-policies.yml`, then rebuild the Grafana image (`docker compose up --build grafana`) to version alert rules, contact points, and routing with the rest of the stack. The default rule watches the `example_api` 5xx rate via Prometheus and routes notifications to the bundled webhook contact point at `http://example_api:9091/alerts`, so you can adjust the PromQL, severities, or webhook target to match your own services.
+The same provisioning file also defines a Slack receiver wired to `${POLYBOT_SLACK_WEBHOOK_URL}` and `${POLYBOT_SLACK_CHANNEL}`; set those environment variables (via `.env` for local compose or Railway variables in production) and the notification policy will forward `severity=warning` alerts to Slack while `severity=critical` alerts continue to hit the webhook contact point.
+There is an additional `Polybot Flow Event Detected` rule that queries the `FlowEvent` Postgres table for any warning/error/critical entries in the last five minutes (using Grafana's SQL macros so the query runs as a time-series). Any non-zero count keeps the series alive, generates a `severity=warning` alert, and lands in Slack; tune the SQL `WHERE` clause or evaluation window to match the exact flows, stages, or severity levels you care about.
 
 ### Prometheus
 - Time-series database for metrics collection

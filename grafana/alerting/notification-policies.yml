@@ -1,0 +1,16 @@
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: example-webhook
+    routes:
+      - receiver: example-webhook
+        matchers:
+          - name: severity
+            value: critical
+            isRegex: false
+      - receiver: example-slack
+        matchers:
+          - name: severity
+            value: warning
+            isRegex: false

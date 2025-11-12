@@ -6,4 +6,4 @@ COPY --chown=472:472 datasources /etc/grafana/provisioning/datasources
 # copy provisioning configs and bundled dashboards
 COPY --chown=472:472 dashboards.yml /etc/grafana/provisioning/dashboards/dashboards.yml
 COPY --chown=472:472 dashboards /etc/grafana/provisioning/dashboards/builtin
-
+COPY --chown=472:472 alerting /etc/grafana/provisioning/alerting
