@@ -2,11 +2,4 @@ apiVersion: 1
 
 policies:
   - orgId: 1
-    receiver: example-webhook
-    routes:
-      - receiver: example-webhook
-        matchers:
-          - "severity=critical"
-      - receiver: example-slack
-        matchers:
-          - "severity=warning"
+    receiver: polybot-slack
