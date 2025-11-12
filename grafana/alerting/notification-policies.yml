@@ -6,11 +6,7 @@ policies:
     routes:
       - receiver: example-webhook
         matchers:
-          - name: severity
-            value: critical
-            isRegex: false
+          - "severity=critical"
       - receiver: example-slack
         matchers:
-          - name: severity
-            value: warning
-            isRegex: false
+          - "severity=warning"
