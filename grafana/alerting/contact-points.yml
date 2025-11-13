@@ -19,8 +19,10 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- if index .Labels "metric" }}
-            *Payload:* {{ index .Labels "metric" }}
+            {{- range $_, $val := .Values }}
+            {{- if $val.Labels.metric }}
+            *Payload:* {{ $val.Labels.metric }}
+            {{- end }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
@@ -45,20 +47,22 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- if .Labels.handle }}
-            *Handle:* {{ .Labels.handle }}
+            {{- range $_, $val := .Values }}
+            {{- if $val.Labels.handle }}
+            *Handle:* {{ $val.Labels.handle }}
             {{- end }}
-            {{- if .Labels.market }}
-            *Market:* {{ .Labels.market }}
+            {{- if $val.Labels.market }}
+            *Market:* {{ $val.Labels.market }}
             {{- end }}
-            {{- if .Labels.amount_usd }}
-            *Amount (USD):* {{ .Labels.amount_usd }}
+            {{- if $val.Labels.amount_usd }}
+            *Amount (USD):* {{ $val.Labels.amount_usd }}
             {{- end }}
-            {{- if or .Labels.user_id .Labels.user }}
-            *User ID:* {{ if .Labels.user_id }}{{ .Labels.user_id }}{{ else }}{{ .Labels.user }}{{ end }}
+            {{- if or $val.Labels.user_id $val.Labels.user }}
+            *User ID:* {{ if $val.Labels.user_id }}{{ $val.Labels.user_id }}{{ else }}{{ $val.Labels.user }}{{ end }}
             {{- end }}
-            {{- if index .Labels "metric" }}
-            *Payload:* {{ index .Labels "metric" }}
+            {{- if $val.Labels.metric }}
+            *Payload:* {{ $val.Labels.metric }}
+            {{- end }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
@@ -83,8 +87,10 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- if index .Labels "metric" }}
-            *Payload:* {{ index .Labels "metric" }}
+            {{- range $_, $val := .Values }}
+            {{- if $val.Labels.metric }}
+            *Payload:* {{ $val.Labels.metric }}
+            {{- end }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
