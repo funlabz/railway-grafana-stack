@@ -48,6 +48,16 @@ contactPoints:
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
             {{- range .Alerts }}
+            {{- $tradeVals := or (index .Values "D") (index .Values "D0") (index .Values "E") (index .Values "E0") -}}
+            {{- $payload := dict -}}
+            {{- if $tradeVals -}}
+            {{- $payload = fromJson (default "{}" (index $tradeVals.Labels "metric")) -}}
+            {{- end }}
+            {{- $handle := or .Labels.user_handle (index $payload "user_handle") (index .Annotations "user_handle") -}}
+            {{- $market := or .Labels.market_slug (index $payload "market_slug") (index .Annotations "market_slug") -}}
+            {{- $amount := or .Labels.amount_usd (index $payload "amount_usd") (index .Annotations "amount_usd") -}}
+            {{- $userID := or .Labels.user_id (index $payload "user_id") (index .Annotations "user_id") -}}
+            {{- $currency := or (index $payload "currency") "USDC" -}}
             *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
             *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
             *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
@@ -55,17 +65,23 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.user_handle }}
-            *Handle:* {{ .Labels.user_handle }}
+            {{- if $handle }}
+            *Handle:* {{ $handle }}
             {{- end }}
-            {{- if .Labels.market_slug }}
-            *Market:* {{ .Labels.market_slug }}
+            {{- if $market }}
+            *Market:* {{ $market }}
             {{- end }}
-            {{- if .Labels.amount_usd }}
-            *Amount (USD):* {{ .Labels.amount_usd }}
+            {{- if $amount }}
+            *Amount ({{ $currency }}):* {{ $amount }}
             {{- end }}
-            {{- if .Labels.user_id }}
-            *User ID:* {{ .Labels.user_id }}
+            {{- if $userID }}
+            *User ID:* {{ $userID }}
+            {{- end }}
+            {{- if $tradeVals }}
+            {{- $metricJSON := default "" (index $tradeVals.Labels "metric") -}}
+            {{- if $metricJSON }}
+            *Payload:* {{ $metricJSON }}
+            {{- end }}
             {{- end }}
 
             {{- if .Annotations.summary }}
