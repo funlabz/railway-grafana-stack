@@ -135,7 +135,11 @@ groups:
                     ' | market=', recent_trade.market_slug,
                     ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
                   ) AS metric,
-                  1::double precision AS value
+                  TO_CHAR(
+                    recent_trade.traded_at AT TIME ZONE 'UTC',
+                    'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+                  ) AS trade_time_label,
+                  recent_trade.trade_value::double precision AS value
                 FROM recent_trade
                 ORDER BY 1;
               refId: D
@@ -170,9 +174,9 @@ groups:
         annotations:
           summary: Polybot user executed a trade during the last
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
-          metric: '{{$.metric}}'
-          time: '{{$.time}}'
-          value: '{{$.value}}'
+          metric: '{{- range $k, $v := $values -}}{{- if (match "E[0-9]+" $k) -}}{{ $v.Labels.metric }}{{- end -}}{{- end }}'
+          time: '{{- range $k, $v := $values -}}{{- if (match "E[0-9]+" $k) -}}{{ $v.Labels.trade_time_label }}{{- end -}}{{- end }}'
+          value: '{{- range $k, $v := $values -}}{{- if (match "E[0-9]+" $k) -}}{{ printf "%.2f" $v.Value }}{{- end -}}{{- end }}'
         labels:
           severity: info
           component: polybot-trade

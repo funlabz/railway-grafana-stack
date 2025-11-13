@@ -33,6 +33,13 @@ contactPoints:
             {{- end }}
             {{- end }}
 
+            {{- if .Annotations }}
+            *Annotations:*
+            {{- range $k, $v := .Annotations }}
+            - {{ $k }}: {{ $v }}
+            {{- end }}
+            {{- end }}
+
             {{- if .Annotations.summary }}
             *Summary:* {{ .Annotations.summary }}
             {{- end }}
@@ -76,6 +83,13 @@ contactPoints:
             {{- end }}
             {{- end }}
 
+            {{- if .Annotations }}
+            *Annotations:*
+            {{- range $k, $v := .Annotations }}
+            - {{ $k }}: {{ $v }}
+            {{- end }}
+            {{- end }}
+
             {{- if .Annotations.summary }}
             *Summary:* {{ .Annotations.summary }}
             {{- end }}
@@ -114,6 +128,13 @@ contactPoints:
             {{- end }}
             {{- if .Annotations.time }}
             *Observed At:* {{ .Annotations.time }}
+            {{- end }}
+            {{- end }}
+
+            {{- if .Annotations }}
+            *Annotations:*
+            {{- range $k, $v := .Annotations }}
+            - {{ $k }}: {{ $v }}
             {{- end }}
             {{- end }}
 
