@@ -170,9 +170,9 @@ groups:
         annotations:
           summary: Polybot user executed a trade during the last
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
-          metric: {{$.metric}}
-          time: {{$.time}}
-          value: {{$.metric}}
+          metric: '{{$.metric}}'
+          time: '{{$.time}}'
+          value: '{{$.value}}'
         labels:
           severity: info
           component: polybot-trade
