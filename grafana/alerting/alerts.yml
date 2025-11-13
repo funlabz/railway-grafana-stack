@@ -133,18 +133,19 @@ groups:
                 )
                 SELECT
                   latest_trade.traded_at AS "time",
-                  jsonb_build_object(
-                    'user_id', latest_trade.user_id,
-                    'user_handle', latest_trade.user_handle,
-                    'market_slug', latest_trade.market_slug,
-                    'amount_usd', latest_trade.amount_usd,
-                    'trade_value', latest_trade.trade_value,
-                    'currency', 'USDC',
-                    'traded_at', TO_CHAR(
+                  CONCAT_WS(
+                    '|',
+                    'user_handle=' || latest_trade.user_handle,
+                    'user_id=' || latest_trade.user_id,
+                    'market_slug=' || latest_trade.market_slug,
+                    'amount_usd=' || latest_trade.amount_usd,
+                    'trade_value=' || latest_trade.trade_value,
+                    'currency=USDC',
+                    'traded_at=' || TO_CHAR(
                       latest_trade.traded_at AT TIME ZONE 'UTC',
                       'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
                     )
-                  )::text AS metric,
+                  ) AS metric,
                   latest_trade.trade_value::double precision AS value
                 FROM latest_trade
                 ORDER BY 1;
@@ -181,11 +182,13 @@ groups:
           summary: |
             {{- $series := or (index $values "D") (index $values "D0") -}}
             {{- if $series -}}
-            {{- $json := default "{}" (index $series.Labels "metric") -}}
-            {{- $payload := fromJson $json -}}
-            {{- $handle := default "unknown" (index $payload "user_handle") -}}
-            {{- $market := default "unknown" (index $payload "market_slug") -}}
-            {{- $amount := default "unknown" (index $payload "amount_usd") -}}
+            {{- $metric := default "" (index $series.Labels "metric") -}}
+            {{- $handle := regexFind "user_handle=([^|]+)" $metric -}}
+            {{- if $handle -}}{{- $handle = regexReplaceAll "user_handle=" $handle "" -}}{{- else -}}{{- $handle = "unknown" -}}{{- end -}}
+            {{- $market := regexFind "market_slug=([^|]+)" $metric -}}
+            {{- if $market -}}{{- $market = regexReplaceAll "market_slug=" $market "" -}}{{- else -}}{{- $market = "unknown" -}}{{- end -}}
+            {{- $amount := regexFind "amount_usd=([^|]+)" $metric -}}
+            {{- if $amount -}}{{- $amount = regexReplaceAll "amount_usd=" $amount "" -}}{{- else -}}{{- $amount = "unknown" -}}{{- end -}}
             Trade by {{ $handle }} on {{ $market }} for {{ $amount }} USDC
             {{- else -}}
             No Polybot trades detected during the last 2 minutes
@@ -193,8 +196,7 @@ groups:
           details: |
             {{- $series := or (index $values "D") (index $values "D0") -}}
             {{- if $series -}}
-            {{- $json := default "{}" (index $series.Labels "metric") -}}
-            Latest trade payload: {{ $json }}
+            Latest trade payload: {{ index $series.Labels "metric" }}
             {{- else -}}
             Waiting for next TradeExecution row within the last 2 minutes
             {{- end -}}

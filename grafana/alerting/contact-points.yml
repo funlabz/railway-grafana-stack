@@ -49,15 +49,40 @@ contactPoints:
           text: |
             {{- range .Alerts }}
             {{- $tradeVals := or (index .Values "D") (index .Values "D0") (index .Values "E") (index .Values "E0") -}}
-            {{- $payload := dict -}}
+            {{- $metric := "" -}}
             {{- if $tradeVals -}}
-            {{- $payload = fromJson (default "{}" (index $tradeVals.Labels "metric")) -}}
+            {{- $metric = default "" (index $tradeVals.Labels "metric") -}}
             {{- end }}
-            {{- $handle := or .Labels.user_handle (index $payload "user_handle") (index .Annotations "user_handle") -}}
-            {{- $market := or .Labels.market_slug (index $payload "market_slug") (index .Annotations "market_slug") -}}
-            {{- $amount := or .Labels.amount_usd (index $payload "amount_usd") (index .Annotations "amount_usd") -}}
-            {{- $userID := or .Labels.user_id (index $payload "user_id") (index .Annotations "user_id") -}}
-            {{- $currency := or (index $payload "currency") "USDC" -}}
+            {{- $handle := or .Labels.user_handle (regexFind "user_handle=([^|]+)" $metric) -}}
+            {{- if $handle -}}
+            {{- $handle = regexReplaceAll "user_handle=" $handle "" -}}
+            {{- else -}}
+            {{- $handle = "unknown" -}}
+            {{- end -}}
+            {{- $market := or .Labels.market_slug (regexFind "market_slug=([^|]+)" $metric) -}}
+            {{- if $market -}}
+            {{- $market = regexReplaceAll "market_slug=" $market "" -}}
+            {{- else -}}
+            {{- $market = "unknown" -}}
+            {{- end -}}
+            {{- $amount := or .Labels.amount_usd (regexFind "amount_usd=([^|]+)" $metric) -}}
+            {{- if $amount -}}
+            {{- $amount = regexReplaceAll "amount_usd=" $amount "" -}}
+            {{- else -}}
+            {{- $amount = "unknown" -}}
+            {{- end -}}
+            {{- $userID := or .Labels.user_id (regexFind "user_id=([^|]+)" $metric) -}}
+            {{- if $userID -}}
+            {{- $userID = regexReplaceAll "user_id=" $userID "" -}}
+            {{- else -}}
+            {{- $userID = "unknown" -}}
+            {{- end -}}
+            {{- $currency := regexFind "currency=([^|]+)" $metric -}}
+            {{- if $currency -}}
+            {{- $currency = regexReplaceAll "currency=" $currency "" -}}
+            {{- else -}}
+            {{- $currency = "USDC" -}}
+            {{- end -}}
             *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
             *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
             *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
@@ -78,9 +103,9 @@ contactPoints:
             *User ID:* {{ $userID }}
             {{- end }}
             {{- if $tradeVals }}
-            {{- $metricJSON := default "" (index $tradeVals.Labels "metric") -}}
-            {{- if $metricJSON }}
-            *Payload:* {{ $metricJSON }}
+            {{- $metricPayload := default "" (index $tradeVals.Labels "metric") -}}
+            {{- if $metricPayload }}
+            *Payload:* {{ $metricPayload }}
             {{- end }}
             {{- end }}
 
