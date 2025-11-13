@@ -35,8 +35,8 @@ contactPoints:
         type: slack
         disableResolveMessage: false
         settings:
-          recipient: "${POLYBOT_SLACK_CHANNEL}"
-          url: "${POLYBOT_SLACK_WEBHOOK_URL}"
+          recipient: "${POLYBOT_BUSINESS_SLACK_CHANNEL}"
+          url: "${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL}"
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
             {{- range .Alerts }}
@@ -62,8 +62,8 @@ contactPoints:
         type: slack
         disableResolveMessage: false
         settings:
-          recipient: "${POLYBOT_SLACK_CHANNEL}"
-          url: "${POLYBOT_SLACK_WEBHOOK_URL}"
+          recipient: "${POLYBOT_BUSINESS_SLACK_CHANNEL}"
+          url: "${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL}"
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
             {{- range .Alerts }}

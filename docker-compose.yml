@@ -59,6 +59,8 @@ services:
       - POLYBOT_METRICS_TOKEN=${POLYBOT_METRICS_TOKEN:-changeme}
       - POLYBOT_SLACK_WEBHOOK_URL=${POLYBOT_SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/your/webhook/here}
       - "POLYBOT_SLACK_CHANNEL=${POLYBOT_SLACK_CHANNEL:-#polybot-alerts}"
+      - POLYBOT_BUSINESS_SLACK_WEBHOOK_URL=${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/your/business/webhook}
+      - "POLYBOT_BUSINESS_SLACK_CHANNEL=${POLYBOT_BUSINESS_SLACK_CHANNEL:-#polybot-business-alerts}"
   
   example_api: 
     build:
