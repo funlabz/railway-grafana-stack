@@ -58,10 +58,6 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.metric }}
-            *Payload:* {{ .Labels.metric }}
-            {{- end }}
-
             {{- if .Annotations.summary }}
             *Summary:* {{ .Annotations.summary }}
             {{- end }}

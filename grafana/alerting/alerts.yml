@@ -105,7 +105,7 @@ groups:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: time_series
+              format: table              # IMPORTANT: table, not time_series
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
@@ -126,18 +126,28 @@ groups:
                   WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
                   ORDER BY te."timestamp" DESC
                   LIMIT 1
+                ),
+                rows AS (
+                  -- If there is a recent trade, use it.
+                  SELECT * FROM recent_trade
+                  UNION ALL
+                  -- If there is NO trade in the last 2 minutes, return a dummy row
+                  SELECT
+                    NULL::timestamp,
+                    NULL::text,
+                    NULL::text,
+                    NULL::text,
+                    NULL::double precision
+                  WHERE NOT EXISTS (SELECT 1 FROM recent_trade)
                 )
                 SELECT
-                  recent_trade.traded_at AS "time",
-                  CONCAT(
-                    'user_id=', recent_trade.user_id,
-                    ' | handle=', recent_trade.user_handle,
-                    ' | market=', recent_trade.market_slug,
-                    ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
-                  ) AS metric,
-                  1::double precision AS value
-                FROM recent_trade
-                ORDER BY 1;
+                  COALESCE(rows.traded_at, NOW()) AS "time",
+                  COALESCE(rows.user_id, 'none') AS user_id,
+                  COALESCE(rows.user_handle, 'none') AS user_handle,
+                  COALESCE(rows.market_slug, 'none') AS market_slug,
+                  COALESCE(rows.trade_value, 0::double precision) AS trade_value,
+                  TO_CHAR(COALESCE(rows.trade_value, 0), 'FM999999990.999999') AS amount_usd
+                FROM rows;
               refId: D
           - refId: E
             relativeTimeRange:
@@ -153,7 +163,7 @@ groups:
                 - evaluator:
                     params:
                       - 0
-                    type: gt
+                    type: gt               # fire when trade_value > 0
                   operator:
                     type: and
                   query:
@@ -168,8 +178,21 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: Polybot user executed a trade during the last 2 minutes
-          details: Payload includes user_id, telegram handle, market slug, and USD notional amount
+          summary: |
+            {{- range $k, $v := $values -}}
+            {{- if (match "E[0-9]+" $k) -}}
+            Trade by {{ index $v.Labels "user_handle" }}
+            (user_id={{ index $v.Labels "user_id" }})
+            on {{ index $v.Labels "market_slug" }}
+            for {{ index $v.Labels "amount_usd" }} USDC
+            {{- end -}}
+            {{- end -}}
+          details: |
+            {{- range $k, $v := $values -}}
+            {{- if (match "E[0-9]+" $k) -}}
+            Labels: {{ $v.Labels }}
+            {{- end -}}
+            {{- end -}}
         labels:
           severity: info
           component: polybot-trade
