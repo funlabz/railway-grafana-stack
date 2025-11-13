@@ -23,8 +23,14 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.metric }}
-            *Payload:* {{ .Labels.metric }}
+            {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
+            *Metric:* {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}n/a{{ end }}
+            {{- if .Annotations.value }}
+            *Value:* {{ .Annotations.value }}
+            {{- end }}
+            {{- if .Annotations.time }}
+            *Observed At:* {{ .Annotations.time }}
+            {{- end }}
             {{- end }}
 
             {{- if .Annotations.summary }}
@@ -57,9 +63,17 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
+            
+        
 
-            {{- if .Labels.metric }}
-            *Payload:* {{ .Labels.metric }}
+            {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
+            *Metric:* {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}n/a{{ end }}
+            {{- if .Annotations.value }}
+            *Value:* {{ .Annotations.value }}
+            {{- end }}
+            {{- if .Annotations.time }}
+            *Observed At:* {{ .Annotations.time }}
+            {{- end }}
             {{- end }}
 
             {{- if .Annotations.summary }}
@@ -93,8 +107,14 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.metric }}
-            *Payload:* {{ .Labels.metric }}
+            {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
+            *Metric:* {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}n/a{{ end }}
+            {{- if .Annotations.value }}
+            *Value:* {{ .Annotations.value }}
+            {{- end }}
+            {{- if .Annotations.time }}
+            *Observed At:* {{ .Annotations.time }}
+            {{- end }}
             {{- end }}
 
             {{- if .Annotations.summary }}
