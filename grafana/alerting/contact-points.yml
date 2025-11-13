@@ -46,9 +46,29 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- $metric := index .Labels "metric" }}
             {{- if $metric }}
-            *Payload:* {{ replace $metric " | " "\n" }}
+            {{- $handle := regexReplaceAll "(?s).*handle=([^|]+).*" $metric "$1" }}
+            {{- if ne $handle $metric }}
+            *Handle:* {{ $handle }}
+            {{- end }}
+            {{- $market := regexReplaceAll "(?s).*market=([^|]+).*" $metric "$1" }}
+            {{- if ne $market $metric }}
+            *Market:* {{ $market }}
+            {{- end }}
+            {{- $amount := regexReplaceAll "(?s).*amount_usd=([^|]+).*" $metric "$1" }}
+            {{- if ne $amount $metric }}
+            *Amount (USD):* {{ $amount }}
+            {{- end }}
+            {{- $user := regexReplaceAll "(?s).*user=([^|]+).*" $metric "$1" }}
+            {{- if ne $user $metric }}
+            *User ID:* {{ $user }}
+            {{- end }}
+            {{- else }}
+            {{- $raw := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- if $raw }}
+            *Payload:* {{ replace $raw " | " "\n" }}
+            {{- end }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
