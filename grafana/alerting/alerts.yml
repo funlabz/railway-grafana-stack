@@ -105,7 +105,7 @@ groups:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: time_series
+              format: table
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
@@ -123,7 +123,7 @@ groups:
                     ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
                   FROM "TradeExecution" te
                   LEFT JOIN "User" u ON u.id = te."userId"
-                  WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
+                  WHERE te."timestamp" >= NOW() - INTERVAL '120 minutes'
                   ORDER BY te."timestamp" DESC
                   LIMIT 1
                 )
