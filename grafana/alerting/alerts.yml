@@ -159,8 +159,21 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: Polybot user executed a trade during the last 2 minutes
-          details: Latest trade payload includes user handle, market, and USD notional amount
+          summary: |
+            {{- range $k, $v := $values -}}
+            {{- if (match "E[0-9]+" $k) -}}
+            Trade by {{ index $v.Labels "user_handle" }}
+            (user_id={{ index $v.Labels "user_id" }})
+            on {{ index $v.Labels "market_slug" }}
+            for {{ index $v.Labels "amount_usd" }} USDC
+            {{- end -}}
+            {{- end -}}
+          details: |
+            {{- range $k, $v := $values -}}
+            {{- if (match "E[0-9]+" $k) -}}
+            Raw labels: {{ $v.Labels }}
+            {{- end -}}
+            {{- end -}}
         labels:
           severity: info
           component: polybot-trade
