@@ -63,6 +63,7 @@ groups:
               reducer: last
               settings:
                 mode: replaceNN
+                replaceWithValue: 0
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: C
@@ -159,6 +160,7 @@ groups:
               reducer: last
               settings:
                 mode: replaceNN
+                replaceWithValue: 0
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: F
@@ -249,6 +251,7 @@ groups:
               reducer: last
               settings:
                 mode: replaceNN
+                replaceWithValue: 0
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: I
