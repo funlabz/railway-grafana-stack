@@ -125,8 +125,7 @@ groups:
                     te."userId"::text AS user_id,
                     COALESCE(u."telegramUsername", u."telegramUserId", te."userId"::text, 'unknown') AS user_handle,
                     COALESCE(te."marketSlug", 'unknown') AS market_slug,
-                    COALESCE(te."side", 'unknown') AS trade_side,
-                    COALESCE(te."costOrProceeds", te.shares * te.price, 0) AS trade_value
+                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
                   FROM "TradeExecution" te
                   LEFT JOIN "User" u ON u.id = te."userId"
                   WHERE $__timeFilter(te."timestamp")
@@ -139,8 +138,7 @@ groups:
                     'user=', recent_trade.user_id,
                     ' | handle=', recent_trade.user_handle,
                     ' | market=', recent_trade.market_slug,
-                    ' | side=', recent_trade.trade_side,
-                    ' | amount=', recent_trade.trade_value
+                    ' | amount_usd=', recent_trade.trade_value
                   ) AS metric,
                   1::double precision AS value
                 FROM recent_trade
