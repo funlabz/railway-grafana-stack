@@ -217,7 +217,6 @@ groups:
                 WITH new_users AS (
                   SELECT
                     u."createdAt" AS registered_at,
-                    u.id::text AS user_id,
                     COALESCE(u."telegramUsername", u."telegramUserId", 'unknown') AS user_handle
                   FROM "User" u
                   WHERE $__timeFilter(u."createdAt")
@@ -225,15 +224,13 @@ groups:
                   LIMIT 5
                 )
                 SELECT
-                  $__time(MAX(new_users.registered_at)),
+                  $__time(COALESCE(MAX(new_users.registered_at), NOW())),
                   CONCAT(
                     'count=', COUNT(*),
-                    ' | users=', array_to_string(array_agg(new_users.user_handle ORDER BY new_users.registered_at DESC), ', ')
+                    ' | users=', COALESCE(string_agg(new_users.user_handle, ', '), 'none')
                   ) AS metric,
                   COUNT(*)::double precision AS value
                 FROM new_users
-                GROUP BY 1
-                ORDER BY 1
               refId: G
           - refId: H
             relativeTimeRange:
