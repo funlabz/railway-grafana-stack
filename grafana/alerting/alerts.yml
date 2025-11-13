@@ -6,6 +6,9 @@ groups:
     folder: Observability
     interval: 30s
     rules:
+      # -------------------------
+      # 1. Flow error alert
+      # -------------------------
       - uid: builtin_polybot_flow_errors
         interval: 30s
         title: Polybot Flow Error Detected
@@ -13,7 +16,7 @@ groups:
         data:
           - refId: A
             relativeTimeRange:
-              from: 120
+              from: 120   # 2 minutes
               to: 0
             datasourceUid: grafana_postgres
             model:
@@ -32,13 +35,13 @@ groups:
                     COALESCE(("context"::jsonb ->> 'class'), 'unknown') AS error_class,
                     LEFT(COALESCE("message", '(no message provided)'), 200) AS error_message
                   FROM "FlowEvent"
-                  WHERE $__timeFilter("createdAt")
-                    AND upper("level") = 'ERROR'
+                  WHERE "createdAt" >= NOW() - INTERVAL '2 minutes'
+                    AND UPPER("level") = 'ERROR'
                   ORDER BY "createdAt" DESC
                   LIMIT 1
                 )
                 SELECT
-                  $__time(recent_error."createdAt"),
+                  recent_error."createdAt" AS "time",
                   CONCAT(
                     'flow=', recent_error.flow_name,
                     ' | stage=', recent_error.stage_name,
@@ -47,7 +50,7 @@ groups:
                   ) AS metric,
                   1::double precision AS value
                 FROM recent_error
-                ORDER BY 1
+                ORDER BY 1;
               refId: A
           - refId: B
             relativeTimeRange:
@@ -79,11 +82,15 @@ groups:
         for: 0s
         annotations:
           summary: Polybot flow errors detected during the last 2 minutes
-          details: Most recent flow, stage, class, and message are embedded in the firing series labels
+          details: Most recent flow, stage, class, and message are embedded in the firing series payload
         labels:
           severity: error
           component: polybot-flow
         isPaused: false
+
+      # -------------------------
+      # 2. Trade executed alert
+      # -------------------------
       - uid: builtin_polybot_trade_activity
         interval: 30s
         title: Polybot Trade Executed
@@ -91,45 +98,37 @@ groups:
         data:
           - refId: D
             relativeTimeRange:
-              from: 120
+              from: 120   # 2 minutes
               to: 0
             datasourceUid: grafana_postgres
             model:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: time_series
+              format: table
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
-                WITH recent_trade AS (
-                  SELECT
-                    te."timestamp" AS traded_at,
-                    te."userId"::text AS user_id,
-                    COALESCE(u."telegramUsername", u."telegramUserId", te."userId"::text, 'unknown') AS user_handle,
-                    COALESCE(te."marketSlug", 'unknown') AS market_slug,
-                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
-                  FROM "TradeExecution" te
-                  LEFT JOIN "User" u ON u.id = te."userId"
-                  WHERE $__timeFilter(te."timestamp")
-                  ORDER BY te."timestamp" DESC
-                  LIMIT 1
-                )
                 SELECT
-                  $__time(recent_trade.traded_at),
-                  CONCAT_WS('\n',
-                    CONCAT('User ID=', recent_trade.user_id),
-                    CONCAT('Handle=', recent_trade.user_handle),
-                    CONCAT('Market=', recent_trade.market_slug),
-                    CONCAT('Amount USD=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999'))
-                  ) AS metric,
-                  1::double precision AS value,
-                  recent_trade.user_handle AS handle,
-                  recent_trade.market_slug AS market,
-                  recent_trade.user_id AS user_id,
-                  TO_CHAR(recent_trade.trade_value, 'FM999999990.999999') AS amount_usd
-                FROM recent_trade
-                ORDER BY 1
+                  te."timestamp" AS traded_at,
+                  te."userId"::text AS user_id,
+                  COALESCE(
+                    u."telegramUsername",
+                    u."telegramUserId"::text,
+                    te."userId"::text,
+                    'unknown'
+                  ) AS user_handle,
+                  COALESCE(te."marketSlug", 'unknown') AS market_slug,
+                  ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value,
+                  TO_CHAR(
+                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)),
+                    'FM999999990.999999'
+                  ) AS amount_usd
+                FROM "TradeExecution" te
+                LEFT JOIN "User" u ON u.id = te."userId"
+                WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
+                ORDER BY te."timestamp" DESC
+                LIMIT 1;
               refId: D
           - refId: E
             relativeTimeRange:
@@ -166,6 +165,10 @@ groups:
           severity: info
           component: polybot-trade
         isPaused: false
+
+      # -------------------------
+      # 3. New user alert
+      # -------------------------
       - uid: builtin_polybot_new_user
         interval: 30s
         title: Polybot New User Registered
@@ -173,34 +176,36 @@ groups:
         data:
           - refId: G
             relativeTimeRange:
-              from: 120
+              from: 120   # 2 minutes
               to: 0
             datasourceUid: grafana_postgres
             model:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: time_series
+              format: table
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
                 WITH new_users AS (
                   SELECT
                     u."createdAt" AS registered_at,
-                    COALESCE(u."telegramUsername", u."telegramUserId", 'unknown') AS user_handle
+                    COALESCE(
+                      u."telegramUsername",
+                      u."telegramUserId"::text,
+                      'unknown'
+                    ) AS user_handle
                   FROM "User" u
-                  WHERE $__timeFilter(u."createdAt")
+                  WHERE u."createdAt" >= NOW() - INTERVAL '2 minutes'
                   ORDER BY u."createdAt" DESC
                   LIMIT 5
                 )
                 SELECT
-                  $__time(COALESCE(MAX(new_users.registered_at), NOW())),
-                  CONCAT(
-                    'count=', COUNT(*),
-                    ' | users=', COALESCE(string_agg(new_users.user_handle, ', '), 'none')
-                  ) AS metric,
-                  COUNT(*)::double precision AS value
-                FROM new_users
+                  COALESCE(MAX(new_users.registered_at), NOW()) AS registered_at,
+                  COUNT(*)::double precision AS user_count,
+                  COUNT(*)::text AS user_count_str,
+                  COALESCE(string_agg(new_users.user_handle, ', '), 'none') AS users
+                FROM new_users;
               refId: G
           - refId: H
             relativeTimeRange:
