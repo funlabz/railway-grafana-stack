@@ -9,7 +9,7 @@ groups:
       - uid: builtin_polybot_flow_errors
         interval: 1m
         title: Polybot Flow Error Detected
-        condition: C
+        condition: B
         data:
           - refId: A
             relativeTimeRange:
@@ -51,23 +51,6 @@ groups:
               refId: A
           - refId: B
             relativeTimeRange:
-              from: 120
-              to: 0
-            datasourceUid: __expr__
-            model:
-              datasource:
-                type: __expr__
-                uid: __expr__
-              expression: A
-              type: reduce
-              reducer: last
-              settings:
-                mode: replaceNN
-                replaceWithValue: 0
-              intervalMs: 1000
-              maxDataPoints: 43200
-          - refId: C
-            relativeTimeRange:
               from: 0
               to: 0
             datasourceUid: __expr__
@@ -75,8 +58,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: "$B"
-              type: math
+              type: classic_conditions
               conditions:
                 - evaluator:
                     params:
@@ -86,7 +68,7 @@ groups:
                     type: and
                   query:
                     params:
-                      - B
+                      - A
                   reducer:
                     type: last
                   type: query
@@ -104,7 +86,7 @@ groups:
         isPaused: false
       - uid: builtin_polybot_trade_activity
         title: Polybot Trade Executed
-        condition: F
+        condition: E
         data:
           - refId: D
             relativeTimeRange:
@@ -146,23 +128,6 @@ groups:
               refId: D
           - refId: E
             relativeTimeRange:
-              from: 120
-              to: 0
-            datasourceUid: __expr__
-            model:
-              datasource:
-                type: __expr__
-                uid: __expr__
-              expression: D
-              type: reduce
-              reducer: last
-              settings:
-                mode: replaceNN
-                replaceWithValue: 0
-              intervalMs: 1000
-              maxDataPoints: 43200
-          - refId: F
-            relativeTimeRange:
               from: 0
               to: 0
             datasourceUid: __expr__
@@ -170,8 +135,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: "$E"
-              type: math
+              type: classic_conditions
               conditions:
                 - evaluator:
                     params:
@@ -181,7 +145,7 @@ groups:
                     type: and
                   query:
                     params:
-                      - E
+                      - D
                   reducer:
                     type: last
                   type: query
@@ -199,7 +163,7 @@ groups:
         isPaused: false
       - uid: builtin_polybot_new_user
         title: Polybot New User Registered
-        condition: I
+        condition: H
         data:
           - refId: G
             relativeTimeRange:
@@ -234,23 +198,6 @@ groups:
               refId: G
           - refId: H
             relativeTimeRange:
-              from: 120
-              to: 0
-            datasourceUid: __expr__
-            model:
-              datasource:
-                type: __expr__
-                uid: __expr__
-              expression: G
-              type: reduce
-              reducer: last
-              settings:
-                mode: replaceNN
-                replaceWithValue: 0
-              intervalMs: 1000
-              maxDataPoints: 43200
-          - refId: I
-            relativeTimeRange:
               from: 0
               to: 0
             datasourceUid: __expr__
@@ -258,8 +205,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: "$H"
-              type: math
+              type: classic_conditions
               conditions:
                 - evaluator:
                     params:
@@ -269,7 +215,7 @@ groups:
                     type: and
                   query:
                     params:
-                      - H
+                      - G
                   reducer:
                     type: last
                   type: query
