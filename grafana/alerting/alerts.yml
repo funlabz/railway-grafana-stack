@@ -26,10 +26,10 @@ groups:
                 SELECT
                   $__timeGroupAlias("createdAt", '1m'),
                   COALESCE("flow", 'unknown') AS metric,
-                  COUNT(*) FILTER (WHERE upper("level") IN ('WARNING','ERROR','CRITICAL'))::double precision AS value
+                  COUNT(*) FILTER (WHERE upper("level") IN ('ERROR','CRITICAL'))::double precision AS value
                 FROM "FlowEvent"
                 WHERE $__timeFilter("createdAt")
-                  AND upper("level") IN ('WARNING','ERROR','CRITICAL')
+                  AND upper("level") IN ('ERROR','CRITICAL')
                 GROUP BY 1, 2
                 ORDER BY 1
               refId: A
