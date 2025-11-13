@@ -168,9 +168,10 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
+          metrics: '{{ range $k, $v := $labels }}{{ $k }}={{ $v }}{{ if not (eq (add $k 1) (len $labels)) }} | {{ end }}{{ end }}'
+          metric: 'user_id={{ $labels.user_id }} | handle={{ $labels.user_handle }} | market={{ $labels.market_slug }}'
           summary: Polybot user executed a trade during the last
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
-          metric: '{{$.metric}}'
           time: '{{$.time}}'
           value: '{{$.value}}'
         labels:

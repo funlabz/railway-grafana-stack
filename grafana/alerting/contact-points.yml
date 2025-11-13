@@ -68,6 +68,7 @@ contactPoints:
 
             {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
             *Metric:* {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}n/a{{ end }}
+            *Metrics:* {{ .Annotations.metrics }}
             {{- if .Annotations.value }}
             *Value:* {{ .Annotations.value }}
             {{- end }}
