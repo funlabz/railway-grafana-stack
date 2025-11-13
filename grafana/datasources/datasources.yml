@@ -69,3 +69,4 @@ datasources:
       httpHeaderName1: Authorization
     secureJsonData:
       httpHeaderValue1: Bearer ${POLYBOT_METRICS_TOKEN}
+
