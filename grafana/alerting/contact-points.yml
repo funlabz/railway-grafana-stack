@@ -51,6 +51,21 @@ contactPoints:
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
             {{- range .Alerts }}
+            {{- $tradeVals := or (index .Values "D") (index .Values "D0") (index .Values "E") (index .Values "E0") -}}
+            {{- $metric := "" -}}
+            {{- if $tradeVals -}}
+            {{- $metric = default "" (index $tradeVals.Labels "metric") -}}
+            {{- end }}
+            {{- $handleMatch := regexFind "user_handle=([^|]+)" $metric -}}
+            {{- $marketMatch := regexFind "market_slug=([^|]+)" $metric -}}
+            {{- $amountMatch := regexFind "amount_usd=([^|]+)" $metric -}}
+            {{- $userIDMatch := regexFind "user_id=([^|]+)" $metric -}}
+            {{- $currencyMatch := regexFind "currency=([^|]+)" $metric -}}
+            {{- $handle := default "unknown" (regexReplaceAll "user_handle=" (default "" $handleMatch) "") -}}
+            {{- $market := default "unknown" (regexReplaceAll "market_slug=" (default "" $marketMatch) "") -}}
+            {{- $amount := default "unknown" (regexReplaceAll "amount_usd=" (default "" $amountMatch) "") -}}
+            {{- $userID := default "unknown" (regexReplaceAll "user_id=" (default "" $userIDMatch) "") -}}
+            {{- $currency := default "USDC" (regexReplaceAll "currency=" (default "" $currencyMatch) "") -}}
             *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
             *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
             *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
@@ -58,8 +73,27 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.metric }}
-            *Payload:* {{ .Labels.metric }}
+            {{- if $handle }}
+            *Handle:* {{ $handle }}
+            {{- end }}
+            {{- if $market }}
+            *Market:* {{ $market }}
+            {{- end }}
+            {{- if $amount }}
+            *Amount ({{ $currency }}):* {{ $amount }}
+            {{- end }}
+            {{- if $userID }}
+            *User ID:* {{ $userID }}
+            {{- end }}
+            {{- $metricPayload := "" -}}
+            {{- if $tradeVals -}}
+            {{- $metricPayload = default "" (index $tradeVals.Labels "metric") -}}
+            {{- end }}
+            {{- if and (eq $metricPayload "") .Labels.metric -}}
+            {{- $metricPayload = .Labels.metric -}}
+            {{- end }}
+            {{- if $metricPayload }}
+            *Payload:* {{ $metricPayload }}
             {{- end }}
 
             {{- if .Annotations.summary }}

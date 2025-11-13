@@ -109,7 +109,7 @@ groups:
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
-                WITH recent_trade AS (
+                WITH latest_trade AS (
                   SELECT
                     te."timestamp" AS traded_at,
                     te."userId"::text AS user_id,
@@ -120,7 +120,11 @@ groups:
                       'unknown'
                     ) AS user_handle,
                     COALESCE(te."marketSlug", 'unknown') AS market_slug,
-                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
+                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value,
+                    TO_CHAR(
+                      ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)),
+                      'FM999999990.999999'
+                    ) AS amount_usd
                   FROM "TradeExecution" te
                   LEFT JOIN "User" u ON u.id = te."userId"
                   WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
@@ -128,15 +132,22 @@ groups:
                   LIMIT 1
                 )
                 SELECT
-                  recent_trade.traded_at AS "time",
-                  CONCAT(
-                    'user_id=', recent_trade.user_id,
-                    ' | handle=', recent_trade.user_handle,
-                    ' | market=', recent_trade.market_slug,
-                    ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
+                  latest_trade.traded_at AS "time",
+                  CONCAT_WS(
+                    '|',
+                    'user_handle=' || latest_trade.user_handle,
+                    'user_id=' || latest_trade.user_id,
+                    'market_slug=' || latest_trade.market_slug,
+                    'amount_usd=' || latest_trade.amount_usd,
+                    'trade_value=' || latest_trade.trade_value,
+                    'currency=USDC',
+                    'traded_at=' || TO_CHAR(
+                      latest_trade.traded_at AT TIME ZONE 'UTC',
+                      'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+                    )
                   ) AS metric,
-                  1::double precision AS value
-                FROM recent_trade
+                  latest_trade.trade_value::double precision AS value
+                FROM latest_trade
                 ORDER BY 1;
               refId: D
           - refId: E
@@ -168,8 +179,27 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: Polybot user executed a trade during the last 2 minutes
-          details: Payload includes user_id, telegram handle, market slug, and USD notional amount
+          summary: |
+            {{- $series := or (index $values "D") (index $values "D0") -}}
+            {{- if $series -}}
+            {{- $metric := default "" (index $series.Labels "metric") -}}
+            {{- $handleMatch := regexFind "user_handle=([^|]+)" $metric -}}
+            {{- $marketMatch := regexFind "market_slug=([^|]+)" $metric -}}
+            {{- $amountMatch := regexFind "amount_usd=([^|]+)" $metric -}}
+            {{- $handle := default "unknown" (regexReplaceAll "user_handle=" (default "" $handleMatch) "") -}}
+            {{- $market := default "unknown" (regexReplaceAll "market_slug=" (default "" $marketMatch) "") -}}
+            {{- $amount := default "unknown" (regexReplaceAll "amount_usd=" (default "" $amountMatch) "") -}}
+            Trade by {{ $handle }} on {{ $market }} for {{ $amount }} USDC
+            {{- else -}}
+            No Polybot trades detected during the last 2 minutes
+            {{- end -}}
+          details: |
+            {{- $series := or (index $values "D") (index $values "D0") -}}
+            {{- if $series -}}
+            Latest trade payload: {{ index $series.Labels "metric" }}
+            {{- else -}}
+            Waiting for next TradeExecution row within the last 2 minutes
+            {{- end -}}
         labels:
           severity: info
           component: polybot-trade
@@ -253,4 +283,3 @@ groups:
           severity: info
           component: polybot-user
         isPaused: false
-
