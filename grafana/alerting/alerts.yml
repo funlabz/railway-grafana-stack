@@ -228,7 +228,7 @@ groups:
                   $__time(MAX(new_users.registered_at)),
                   CONCAT(
                     'count=', COUNT(*),
-                    ' | users=', string_agg(new_users.user_handle, ', ' ORDER BY new_users.registered_at DESC)
+                    ' | users=', array_to_string(array_agg(new_users.user_handle ORDER BY new_users.registered_at DESC), ', ')
                   ) AS metric,
                   COUNT(*)::double precision AS value
                 FROM new_users
