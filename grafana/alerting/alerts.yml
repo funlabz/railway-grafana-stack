@@ -61,7 +61,7 @@ groups:
               type: reduce
               reducer: last
               settings:
-                mode: replace
+                mode: replaceNN
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: C
@@ -157,7 +157,7 @@ groups:
               type: reduce
               reducer: last
               settings:
-                mode: replace
+                mode: replaceNN
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: F
@@ -247,7 +247,7 @@ groups:
               type: reduce
               reducer: last
               settings:
-                mode: replace
+                mode: replaceNN
               intervalMs: 1000
               maxDataPoints: 43200
           - refId: I
