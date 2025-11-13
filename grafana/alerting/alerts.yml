@@ -117,11 +117,11 @@ groups:
                 )
                 SELECT
                   $__time(recent_trade.traded_at),
-                  CONCAT(
-                    'user=', recent_trade.user_id,
-                    ' | handle=', recent_trade.user_handle,
-                    ' | market=', recent_trade.market_slug,
-                    ' | amount_usd=', recent_trade.trade_value
+                  CONCAT_WS('\n',
+                    CONCAT('User ID=', recent_trade.user_id),
+                    CONCAT('Handle=', recent_trade.user_handle),
+                    CONCAT('Market=', recent_trade.market_slug),
+                    CONCAT('Amount USD=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999'))
                   ) AS metric,
                   1::double precision AS value,
                   recent_trade.user_handle AS handle,
