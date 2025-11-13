@@ -253,3 +253,4 @@ groups:
           severity: info
           component: polybot-user
         isPaused: false
+
