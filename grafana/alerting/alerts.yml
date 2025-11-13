@@ -82,7 +82,7 @@ groups:
         for: 0s
         annotations:
           summary: Polybot flow errors detected during the last 2 minutes
-          details: Most recent flow, stage, class, and message are embedded in the firing series payload
+          details: Most recent flow, stage, class, and message are embedded in the Payload field
         labels:
           severity: error
           component: polybot-flow
@@ -105,30 +105,39 @@ groups:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: table
+              format: time_series
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
+                WITH recent_trade AS (
+                  SELECT
+                    te."timestamp" AS traded_at,
+                    te."userId"::text AS user_id,
+                    COALESCE(
+                      u."telegramUsername",
+                      u."telegramUserId"::text,
+                      te."userId"::text,
+                      'unknown'
+                    ) AS user_handle,
+                    COALESCE(te."marketSlug", 'unknown') AS market_slug,
+                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
+                  FROM "TradeExecution" te
+                  LEFT JOIN "User" u ON u.id = te."userId"
+                  WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
+                  ORDER BY te."timestamp" DESC
+                  LIMIT 1
+                )
                 SELECT
-                  te."timestamp" AS traded_at,
-                  te."userId"::text AS user_id,
-                  COALESCE(
-                    u."telegramUsername",
-                    u."telegramUserId"::text,
-                    te."userId"::text,
-                    'unknown'
-                  ) AS user_handle,
-                  COALESCE(te."marketSlug", 'unknown') AS market_slug,
-                  ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value,
-                  TO_CHAR(
-                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)),
-                    'FM999999990.999999'
-                  ) AS amount_usd
-                FROM "TradeExecution" te
-                LEFT JOIN "User" u ON u.id = te."userId"
-                WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
-                ORDER BY te."timestamp" DESC
-                LIMIT 1;
+                  recent_trade.traded_at AS "time",
+                  CONCAT(
+                    'user_id=', recent_trade.user_id,
+                    ' | handle=', recent_trade.user_handle,
+                    ' | market=', recent_trade.market_slug,
+                    ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
+                  ) AS metric,
+                  1::double precision AS value
+                FROM recent_trade
+                ORDER BY 1;
               refId: D
           - refId: E
             relativeTimeRange:
@@ -159,21 +168,8 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: |
-            {{- range $k, $v := $values -}}
-            {{- if (match "E[0-9]+" $k) -}}
-            Trade by {{ index $v.Labels "user_handle" }}
-            (user_id={{ index $v.Labels "user_id" }})
-            on {{ index $v.Labels "market_slug" }}
-            for {{ index $v.Labels "amount_usd" }} USDC
-            {{- end -}}
-            {{- end -}}
-          details: |
-            {{- range $k, $v := $values -}}
-            {{- if (match "E[0-9]+" $k) -}}
-            Raw labels: {{ $v.Labels }}
-            {{- end -}}
-            {{- end -}}
+          summary: Polybot user executed a trade during the last 2 minutes
+          details: Payload includes user_id, telegram handle, market slug, and USD notional amount
         labels:
           severity: info
           component: polybot-trade
@@ -196,7 +192,7 @@ groups:
               datasource:
                 type: postgres
                 uid: grafana_postgres
-              format: table
+              format: time_series
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
@@ -214,10 +210,12 @@ groups:
                   LIMIT 5
                 )
                 SELECT
-                  COALESCE(MAX(new_users.registered_at), NOW()) AS registered_at,
-                  COUNT(*)::double precision AS user_count,
-                  COUNT(*)::text AS user_count_str,
-                  COALESCE(string_agg(new_users.user_handle, ', '), 'none') AS users
+                  COALESCE(MAX(new_users.registered_at), NOW()) AS "time",
+                  CONCAT(
+                    'count=', COUNT(*),
+                    ' | users=', COALESCE(string_agg(new_users.user_handle, ', '), 'none')
+                  ) AS metric,
+                  COUNT(*)::double precision AS value
                 FROM new_users;
               refId: G
           - refId: H
@@ -250,7 +248,7 @@ groups:
         for: 0s
         annotations:
           summary: New Polybot user registered during the last 2 minutes
-          details: Batch includes up to five freshest handles so celebratory alerts highlight who joined
+          details: Payload shows count and up to five newest user handles
         labels:
           severity: info
           component: polybot-user

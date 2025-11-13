@@ -27,6 +27,9 @@ contactPoints:
             *Payload:* {{ .Labels.metric }}
             {{- end }}
 
+            {{- if .Annotations.summary }}
+            *Summary:* {{ .Annotations.summary }}
+            {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
             {{- end }}
@@ -55,17 +58,8 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.user_handle }}
-            *Handle:* {{ .Labels.user_handle }}
-            {{- end }}
-            {{- if .Labels.market_slug }}
-            *Market:* {{ .Labels.market_slug }}
-            {{- end }}
-            {{- if .Labels.amount_usd }}
-            *Amount (USD):* {{ .Labels.amount_usd }}
-            {{- end }}
-            {{- if .Labels.user_id }}
-            *User ID:* {{ .Labels.user_id }}
+            {{- if .Labels.metric }}
+            *Payload:* {{ .Labels.metric }}
             {{- end }}
 
             {{- if .Annotations.summary }}
@@ -99,11 +93,8 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
 
-            {{- if .Labels.user_count_str }}
-            *New users:* {{ .Labels.user_count_str }}
-            {{- end }}
-            {{- if .Labels.users }}
-            *Users:* {{ .Labels.users }}
+            {{- if .Labels.metric }}
+            *Payload:* {{ .Labels.metric }}
             {{- end }}
 
             {{- if .Annotations.summary }}
