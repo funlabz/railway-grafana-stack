@@ -168,8 +168,11 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: Polybot user executed a trade during the last 2 minutes
+          summary: Polybot user executed a trade during the last
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
+          metric: {{$.metric}}
+          time: {{$.time}}
+          value: {{$.metric}}
         labels:
           severity: info
           component: polybot-trade
@@ -185,7 +188,7 @@ groups:
         data:
           - refId: G
             relativeTimeRange:
-              from: 120   # 2 minutes
+              from: 60   # 1 minutes
               to: 0
             datasourceUid: grafana_postgres
             model:
@@ -205,7 +208,7 @@ groups:
                       'unknown'
                     ) AS user_handle
                   FROM "User" u
-                  WHERE u."createdAt" >= NOW() - INTERVAL '2 minutes'
+                  WHERE u."createdAt" >= NOW() - INTERVAL '1 minutes'
                   ORDER BY u."createdAt" DESC
                   LIMIT 5
                 )
