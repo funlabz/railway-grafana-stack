@@ -4,15 +4,15 @@ groups:
   - orgId: 1
     name: Polybot Flow Alerts
     folder: Observability
-    interval: 1m
+    interval: 2m
     rules:
-      - uid: builtin_polybot_flow_events
-        title: Polybot Flow Event Detected
+      - uid: builtin_polybot_flow_errors
+        title: Polybot Flow Error Detected
         condition: C
         data:
           - refId: A
             relativeTimeRange:
-              from: 300
+              from: 120
               to: 0
             datasourceUid: grafana_postgres
             model:
@@ -23,19 +23,34 @@ groups:
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
+                WITH recent_error AS (
+                  SELECT
+                    "createdAt",
+                    COALESCE("flow", 'unknown') AS flow_name,
+                    COALESCE("stage", 'unknown') AS stage_name,
+                    COALESCE(("context"::jsonb ->> 'class'), 'unknown') AS error_class,
+                    LEFT(COALESCE("message", '(no message provided)'), 200) AS error_message
+                  FROM "FlowEvent"
+                  WHERE $__timeFilter("createdAt")
+                    AND upper("level") = 'ERROR'
+                  ORDER BY "createdAt" DESC
+                  LIMIT 1
+                )
                 SELECT
-                  $__timeGroupAlias("createdAt", '1m'),
-                  COALESCE("flow", 'unknown') AS metric,
-                  COUNT(*) FILTER (WHERE upper("level") IN ('ERROR','CRITICAL'))::double precision AS value
-                FROM "FlowEvent"
-                WHERE $__timeFilter("createdAt")
-                  AND upper("level") IN ('ERROR','CRITICAL')
-                GROUP BY 1, 2
+                  $__time(recent_error."createdAt"),
+                  CONCAT(
+                    'flow=', recent_error.flow_name,
+                    ' | stage=', recent_error.stage_name,
+                    ' | class=', recent_error.error_class,
+                    ' | message=', recent_error.error_message
+                  ) AS metric,
+                  1::double precision AS value
+                FROM recent_error
                 ORDER BY 1
               refId: A
           - refId: B
             relativeTimeRange:
-              from: 300
+              from: 120
               to: 0
             datasourceUid: __expr__
             model:
@@ -79,8 +94,9 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: New Polybot flow events with warning/error levels detected in the last 5 minutes
+          summary: Polybot flow errors detected during the last 2 minutes
+          details: Most recent flow, stage, class, and message are embedded in the firing series labels
         labels:
-          severity: warning
+          severity: error
           component: polybot-flow
         isPaused: false
