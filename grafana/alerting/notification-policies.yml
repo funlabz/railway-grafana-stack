@@ -2,4 +2,13 @@ apiVersion: 1
 
 policies:
   - orgId: 1
-    receiver: polybot-slack
+    receiver: polybot-flow-slack
+    groupBy:
+      - alertname
+    routes:
+      - receiver: polybot-trade-slack
+        matchers:
+          - component=polybot-trade
+      - receiver: polybot-user-slack
+        matchers:
+          - component=polybot-user

@@ -2,24 +2,80 @@ apiVersion: 1
 
 contactPoints:
   - orgId: 1
-    name: polybot-slack
+    name: polybot-flow-slack
     receivers:
-      - uid: polybot_slack
+      - uid: polybot_flow_slack
         type: slack
         disableResolveMessage: false
         settings:
           recipient: "${POLYBOT_SLACK_CHANNEL}"
           url: "${POLYBOT_SLACK_WEBHOOK_URL}"
-          title: '{{ if .CommonAnnotations.summary }}{{ .CommonAnnotations.summary }}{{ else if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
+          title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
-            *Severity:* {{ if .CommonLabels.severity }}{{ .CommonLabels.severity }}{{ else }}n/a{{ end }}
-            *Component:* {{ if .CommonLabels.component }}{{ .CommonLabels.component }}{{ else }}n/a{{ end }}
             {{- range .Alerts }}
+            *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
+            *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
+            *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- if index .Labels "metric" }}
-            *Payload:* {{ index .Labels "metric" }}
+            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- if $metric }}
+            *Payload:* {{ replace $metric " | " "\n" }}
+            {{- end }}
+            {{- if .Annotations.details }}
+            *Details:* {{ .Annotations.details }}
+            {{- end }}
+            {{- end }}
+          color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
+  - orgId: 1
+    name: polybot-trade-slack
+    receivers:
+      - uid: polybot_trade_slack
+        type: slack
+        disableResolveMessage: false
+        settings:
+          recipient: "${POLYBOT_SLACK_CHANNEL}"
+          url: "${POLYBOT_SLACK_WEBHOOK_URL}"
+          title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
+          text: |
+            {{- range .Alerts }}
+            *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
+            *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
+            *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
+            {{- if .GeneratorURL }}
+            *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
+            {{- end }}
+            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- if $metric }}
+            *Payload:* {{ replace $metric " | " "\n" }}
+            {{- end }}
+            {{- if .Annotations.details }}
+            *Details:* {{ .Annotations.details }}
+            {{- end }}
+            {{- end }}
+          color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
+  - orgId: 1
+    name: polybot-user-slack
+    receivers:
+      - uid: polybot_user_slack
+        type: slack
+        disableResolveMessage: false
+        settings:
+          recipient: "${POLYBOT_SLACK_CHANNEL}"
+          url: "${POLYBOT_SLACK_WEBHOOK_URL}"
+          title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
+          text: |
+            {{- range .Alerts }}
+            *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
+            *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
+            *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
+            {{- if .GeneratorURL }}
+            *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
+            {{- end }}
+            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- if $metric }}
+            *Payload:* {{ replace $metric " | " "\n" }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
