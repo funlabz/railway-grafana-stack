@@ -100,3 +100,99 @@ groups:
           severity: error
           component: polybot-flow
         isPaused: false
+      - uid: builtin_polybot_trade_activity
+        title: Polybot Trade Executed
+        condition: F
+        data:
+          - refId: D
+            relativeTimeRange:
+              from: 120
+              to: 0
+            datasourceUid: grafana_postgres
+            model:
+              datasource:
+                type: postgres
+                uid: grafana_postgres
+              format: time_series
+              intervalMs: 1000
+              maxDataPoints: 43200
+              rawSql: |
+                WITH recent_trade AS (
+                  SELECT
+                    te."timestamp" AS traded_at,
+                    te."userId"::text AS user_id,
+                    COALESCE(u."telegramUsername", u."telegramUserId", te."userId"::text, 'unknown') AS user_handle,
+                    COALESCE(te."marketSlug", 'unknown') AS market_slug,
+                    COALESCE(te."side", 'unknown') AS trade_side,
+                    COALESCE(te."costOrProceeds", te.shares * te.price, 0) AS trade_value
+                  FROM "TradeExecution" te
+                  LEFT JOIN "User" u ON u.id = te."userId"
+                  WHERE $__timeFilter(te."timestamp")
+                  ORDER BY te."timestamp" DESC
+                  LIMIT 1
+                )
+                SELECT
+                  $__time(recent_trade.traded_at),
+                  CONCAT(
+                    'user=', recent_trade.user_id,
+                    ' | handle=', recent_trade.user_handle,
+                    ' | market=', recent_trade.market_slug,
+                    ' | side=', recent_trade.trade_side,
+                    ' | amount=', recent_trade.trade_value
+                  ) AS metric,
+                  1::double precision AS value
+                FROM recent_trade
+                ORDER BY 1
+              refId: D
+          - refId: E
+            relativeTimeRange:
+              from: 120
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: D
+              type: reduce
+              reducer: last
+              settings:
+                mode: replace
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: F
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: E
+              type: math
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - E
+                  reducer:
+                    type: last
+                  type: query
+              intervalMs: 1000
+              maxDataPoints: 43200
+        noDataState: OK
+        executionErrorState: Error
+        for: 0s
+        annotations:
+          summary: Polybot user executed a trade during the last 2 minutes
+          details: Latest trade payload includes user, handle, market, side, and notional amount
+        labels:
+          severity: info
+          component: polybot-trade
+        isPaused: false
