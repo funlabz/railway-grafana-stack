@@ -10,3 +10,15 @@ contactPoints:
         settings:
           recipient: "${POLYBOT_SLACK_CHANNEL}"
           url: "${POLYBOT_SLACK_WEBHOOK_URL}"
+          title: '{{ if .CommonAnnotations.summary }}{{ .CommonAnnotations.summary }}{{ else }}{{ .CommonLabels.alertname }} fired{{ end }}'
+          text: |
+            *Severity:* {{ if .CommonLabels.severity }}{{ .CommonLabels.severity }}{{ else }}n/a{{ end }}
+            *Component:* {{ if .CommonLabels.component }}{{ .CommonLabels.component }}{{ else }}n/a{{ end }}
+            {{- if .CommonAnnotations.details }}
+            *Details:* {{ .CommonAnnotations.details }}
+            {{- end }}
+            {{- range .Alerts }}
+            {{- if index .Labels "metric" }}
+            *Payload:* {{ index .Labels "metric" }}
+            {{- end }}
+            {{- end }}
