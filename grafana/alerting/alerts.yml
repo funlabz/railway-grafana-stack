@@ -4,10 +4,10 @@ groups:
   - orgId: 1
     name: Polybot Flow Alerts
     folder: Observability
-    interval: 1m
+    interval: 30s
     rules:
       - uid: builtin_polybot_flow_errors
-        interval: 1m
+        interval: 30s
         title: Polybot Flow Error Detected
         condition: B
         data:
@@ -85,7 +85,7 @@ groups:
           component: polybot-flow
         isPaused: false
       - uid: builtin_polybot_trade_activity
-        interval: 1m
+        interval: 30s
         title: Polybot Trade Executed
         condition: E
         data:
@@ -167,7 +167,7 @@ groups:
           component: polybot-trade
         isPaused: false
       - uid: builtin_polybot_new_user
-        interval: 1m
+        interval: 30s
         title: Polybot New User Registered
         condition: H
         data:
