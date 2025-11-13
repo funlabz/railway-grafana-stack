@@ -19,9 +19,8 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
-            {{- if $metric }}
-            *Payload:* {{ replace $metric " | " "\n" }}
+            {{- if index .Labels "metric" }}
+            *Payload:* {{ index .Labels "metric" }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
@@ -46,31 +45,20 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- $metric := index .Labels "metric" }}
-            {{- if not $metric }}
-            {{- if .Annotations.__value_string__ }}
-            {{- $metric = regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
+            {{- if .Labels.handle }}
+            *Handle:* {{ .Labels.handle }}
             {{- end }}
+            {{- if .Labels.market }}
+            *Market:* {{ .Labels.market }}
             {{- end }}
-            {{- if $metric }}
-            {{- $handle := regexReplaceAll "(?s).*handle=([^|]+).*" $metric "$1" }}
-            {{- if and $handle (ne $handle $metric) }}
-            *Handle:* {{ $handle }}
+            {{- if .Labels.amount_usd }}
+            *Amount (USD):* {{ .Labels.amount_usd }}
             {{- end }}
-            {{- $market := regexReplaceAll "(?s).*market=([^|]+).*" $metric "$1" }}
-            {{- if and $market (ne $market $metric) }}
-            *Market:* {{ $market }}
+            {{- if or .Labels.user_id .Labels.user }}
+            *User ID:* {{ if .Labels.user_id }}{{ .Labels.user_id }}{{ else }}{{ .Labels.user }}{{ end }}
             {{- end }}
-            {{- $amount := regexReplaceAll "(?s).*amount_usd=([^|]+).*" $metric "$1" }}
-            {{- if and $amount (ne $amount $metric) }}
-            *Amount (USD):* {{ $amount }}
-            {{- end }}
-            {{- $user := regexReplaceAll "(?s).*user=([^|]+).*" $metric "$1" }}
-            {{- if and $user (ne $user $metric) }}
-            *User ID:* {{ $user }}
-            {{- end }}
-            {{- else }}
-            *Payload:* (metric label missing)
+            {{- if index .Labels "metric" }}
+            *Payload:* {{ index .Labels "metric" }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}
@@ -95,9 +83,8 @@ contactPoints:
             {{- if .GeneratorURL }}
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
-            {{- $metric := regexReplaceAll "(?s).*metric='([^']+)'.*" .Annotations.__value_string__ "$1" }}
-            {{- if $metric }}
-            *Payload:* {{ replace $metric " | " "\n" }}
+            {{- if index .Labels "metric" }}
+            *Payload:* {{ index .Labels "metric" }}
             {{- end }}
             {{- if .Annotations.details }}
             *Details:* {{ .Annotations.details }}

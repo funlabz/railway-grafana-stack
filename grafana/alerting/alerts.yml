@@ -4,10 +4,10 @@ groups:
   - orgId: 1
     name: Polybot Flow Alerts
     folder: Observability
-    interval: 30s
+    interval: 1m
     rules:
       - uid: builtin_polybot_flow_errors
-        interval: 30s
+        interval: 1m
         title: Polybot Flow Error Detected
         condition: B
         data:
@@ -85,7 +85,7 @@ groups:
           component: polybot-flow
         isPaused: false
       - uid: builtin_polybot_trade_activity
-        interval: 30s
+        interval: 1m
         title: Polybot Trade Executed
         condition: E
         data:
@@ -123,7 +123,11 @@ groups:
                     ' | market=', recent_trade.market_slug,
                     ' | amount_usd=', recent_trade.trade_value
                   ) AS metric,
-                  1::double precision AS value
+                  1::double precision AS value,
+                  recent_trade.user_handle AS handle,
+                  recent_trade.market_slug AS market,
+                  recent_trade.user_id AS user_id,
+                  TO_CHAR(recent_trade.trade_value, 'FM999999990.999999') AS amount_usd
                 FROM recent_trade
                 ORDER BY 1
               refId: D
@@ -163,7 +167,7 @@ groups:
           component: polybot-trade
         isPaused: false
       - uid: builtin_polybot_new_user
-        interval: 30s
+        interval: 1m
         title: Polybot New User Registered
         condition: H
         data:
