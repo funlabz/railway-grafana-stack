@@ -75,7 +75,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: B
+              expression: $B
               type: math
               conditions:
                 - evaluator:
@@ -170,7 +170,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: E
+              expression: $E
               type: math
               conditions:
                 - evaluator:
@@ -192,7 +192,7 @@ groups:
         for: 0s
         annotations:
           summary: Polybot user executed a trade during the last 2 minutes
-          details: Latest trade payload includes user, handle, market, side, and notional amount
+          details: Latest trade payload includes user handle, market, and USD notional amount
         labels:
           severity: info
           component: polybot-trade
@@ -261,7 +261,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: H
+              expression: $H
               type: math
               conditions:
                 - evaluator:
