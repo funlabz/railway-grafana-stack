@@ -75,7 +75,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: $B
+              expression: "$B"
               type: math
               conditions:
                 - evaluator:
@@ -170,7 +170,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: $E
+              expression: "$E"
               type: math
               conditions:
                 - evaluator:
@@ -261,7 +261,7 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              expression: $H
+              expression: "$H"
               type: math
               conditions:
                 - evaluator:
