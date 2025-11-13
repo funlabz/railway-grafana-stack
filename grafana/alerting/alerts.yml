@@ -8,7 +8,7 @@ groups:
     rules:
       - uid: builtin_polybot_flow_errors_2
         interval: 1m
-        title: Polybot Flow Error Detected
+        title: Polybot Flow Error Detected New
         condition: B
         data:
           - refId: A
