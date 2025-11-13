@@ -10,15 +10,19 @@ contactPoints:
         settings:
           recipient: "${POLYBOT_SLACK_CHANNEL}"
           url: "${POLYBOT_SLACK_WEBHOOK_URL}"
-          title: '{{ if .CommonAnnotations.summary }}{{ .CommonAnnotations.summary }}{{ else }}{{ .CommonLabels.alertname }} fired{{ end }}'
+          title: '{{ if .CommonAnnotations.summary }}{{ .CommonAnnotations.summary }}{{ else if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
             *Severity:* {{ if .CommonLabels.severity }}{{ .CommonLabels.severity }}{{ else }}n/a{{ end }}
             *Component:* {{ if .CommonLabels.component }}{{ .CommonLabels.component }}{{ else }}n/a{{ end }}
-            {{- if .CommonAnnotations.details }}
-            *Details:* {{ .CommonAnnotations.details }}
-            {{- end }}
             {{- range .Alerts }}
+            {{- if .GeneratorURL }}
+            *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
+            {{- end }}
             {{- if index .Labels "metric" }}
             *Payload:* {{ index .Labels "metric" }}
             {{- end }}
+            {{- if .Annotations.details }}
+            *Details:* {{ .Annotations.details }}
             {{- end }}
+            {{- end }}
+          color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
