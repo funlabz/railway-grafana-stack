@@ -196,3 +196,93 @@ groups:
           severity: info
           component: polybot-trade
         isPaused: false
+      - uid: builtin_polybot_new_user
+        title: Polybot New User Registered
+        condition: I
+        data:
+          - refId: G
+            relativeTimeRange:
+              from: 120
+              to: 0
+            datasourceUid: grafana_postgres
+            model:
+              datasource:
+                type: postgres
+                uid: grafana_postgres
+              format: time_series
+              intervalMs: 1000
+              maxDataPoints: 43200
+              rawSql: |
+                WITH new_users AS (
+                  SELECT
+                    u."createdAt" AS registered_at,
+                    u.id::text AS user_id,
+                    COALESCE(u."telegramUsername", u."telegramUserId", 'unknown') AS user_handle
+                  FROM "User" u
+                  WHERE $__timeFilter(u."createdAt")
+                  ORDER BY u."createdAt" DESC
+                  LIMIT 5
+                )
+                SELECT
+                  $__time(MAX(new_users.registered_at)),
+                  CONCAT(
+                    'count=', COUNT(*),
+                    ' | users=', string_agg(new_users.user_handle, ', ' ORDER BY new_users.registered_at DESC)
+                  ) AS metric,
+                  COUNT(*)::double precision AS value
+                FROM new_users
+                GROUP BY 1
+                ORDER BY 1
+              refId: G
+          - refId: H
+            relativeTimeRange:
+              from: 120
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: G
+              type: reduce
+              reducer: last
+              settings:
+                mode: replace
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: I
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: H
+              type: math
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - H
+                  reducer:
+                    type: last
+                  type: query
+              intervalMs: 1000
+              maxDataPoints: 43200
+        noDataState: OK
+        executionErrorState: Error
+        for: 0s
+        annotations:
+          summary: New Polybot user registered during the last 2 minutes
+          details: Batch includes up to five freshest handles so celebratory alerts highlight who joined
+        labels:
+          severity: info
+          component: polybot-user
+        isPaused: false
