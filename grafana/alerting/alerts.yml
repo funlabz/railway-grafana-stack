@@ -111,33 +111,27 @@ groups:
               rawSql: |
                 WITH recent_trade AS (
                   SELECT
-                    te."timestamp" AS traded_at,
-                    te."userId"::text AS user_id,
-                    COALESCE(
-                      u."telegramUsername",
-                      u."telegramUserId"::text,
-                      te."userId"::text,
-                      'unknown'
-                    ) AS user_handle,
-                    COALESCE(te."marketSlug", 'unknown') AS market_slug,
-                    ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0)) AS trade_value
+                  te."timestamp"                        AS traded_at,
+                  te."userId"::text                     AS user_id,
+                  COALESCE(u."telegramUsername",
+                  u."telegramUserId"::text,
+                  te."userId"::text,
+                  'unknown')                   AS user_handle,
+                  COALESCE(te."marketSlug", 'unknown')  AS market_slug,
+                  ABS(COALESCE(te."costOrProceeds", te.shares * te.price, 0))::double precision AS trade_value
                   FROM "TradeExecution" te
                   LEFT JOIN "User" u ON u.id = te."userId"
                   WHERE te."timestamp" >= NOW() - INTERVAL '2 minutes'
                   ORDER BY te."timestamp" DESC
                   LIMIT 1
-                )
-                SELECT
-                  recent_trade.traded_at AS "time",
-                  CONCAT(
-                    'user_id=', recent_trade.user_id,
-                    ' | handle=', recent_trade.user_handle,
-                    ' | market=', recent_trade.market_slug,
-                    ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
-                  ) AS metric,
-                  1::double precision AS value
-                FROM recent_trade
-                ORDER BY 1;
+                  )
+                  SELECT
+                  user_id,                                 -- label (string)
+                  user_handle,                             -- label (string)
+                  market_slug,                             -- label (string)
+                  TO_CHAR(trade_value, 'FM999999990.999999') AS amount_usd, -- label (string)
+                  trade_value                              AS value         -- the ONLY numeric column
+                  FROM recent_trade;
               refId: D
           - refId: E
             relativeTimeRange:
@@ -168,11 +162,6 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          # Pull the "metric" label off the classic condition result (refId E)
-          # This is evaluated by Grafana at alert-runtime and becomes .Annotations.metric
-          metric: '{{- range $k, $v := $values -}}{{- if (hasPrefix $k "E") -}}{{- index $v.Labels "metric" -}}{{- end -}}{{- end -}}'
-          # Optional: also capture the numeric decision value if you want to show it
-          decision_value: '{{- range $k, $v := $values -}}{{- if (hasPrefix $k "E") -}}{{- $v.Value -}}{{- end -}}{{- end -}}'
           summary: Polybot user executed a trade during the last 2 minutes
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
 
