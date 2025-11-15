@@ -56,11 +56,9 @@ contactPoints:
           url: "${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL}"
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
-            {{- range .Alerts.Firing }}
-            
+            {{- range .Alerts }}
             {{ .Annotations.summary }}
             Observed At: {{ .StartsAt }}
-  
             {{- end -}}
           color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
 
