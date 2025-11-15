@@ -58,11 +58,13 @@ contactPoints:
           text: |
             {{ range .Alerts.Firing }}
             *Polybot Trade Executed*
-            
+
             Metric: {{ .Annotations.metric }}
-            Value: {{ index .Values "E" }}      
+            {{- if .Annotations.value }}
+            Value: {{ .Annotations.value }}
+            {{- end }}
             Observed At: {{ .StartsAt }}
-          
+
             {{ end }}
           color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
 
