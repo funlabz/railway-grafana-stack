@@ -162,7 +162,7 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          summary: Polybot user executed a trade during the last 2 minutes
+          summary: user_id={{ $labels.user_id }} | handle={{ $labels.user_handle }} | market={{ $labels.market_slug }} | amount_usd={{ $labels.amount_usd }}
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
 
         labels:
