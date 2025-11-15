@@ -46,7 +46,7 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=yourpassword123
       - GF_DEFAULT_INSTANCE_NAME=Grafana
-      - GF_INSTALL_PLUGINS=marcusolsson-json-datasource,grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel
+      - GF_INSTALL_PLUGINS=marcusolsson-json-datasource,grafana-clock-panel
       - LOKI_INTERNAL_URL=http://loki:3100
       - PROMETHEUS_INTERNAL_URL=http://prometheus:9090
       - TEMPO_INTERNAL_URL=http://tempo:3200
@@ -57,6 +57,10 @@ services:
       - POSTGRES_DS_SSLMODE=${POSTGRES_DS_SSLMODE:-disable}
       - POLYBOT_JSON_URL=${POLYBOT_JSON_URL:-http://polybot:3000/api/status}
       - POLYBOT_METRICS_TOKEN=${POLYBOT_METRICS_TOKEN:-changeme}
+      - POLYBOT_SLACK_WEBHOOK_URL=${POLYBOT_SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/your/webhook/here}
+      - "POLYBOT_SLACK_CHANNEL=${POLYBOT_SLACK_CHANNEL:-#polybot-alerts}"
+      - POLYBOT_BUSINESS_SLACK_WEBHOOK_URL=${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/your/business/webhook}
+      - "POLYBOT_BUSINESS_SLACK_CHANNEL=${POLYBOT_BUSINESS_SLACK_CHANNEL:-#polybot-business-alerts}"
   
   example_api: 
     build:

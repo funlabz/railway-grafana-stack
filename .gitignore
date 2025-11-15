@@ -1,3 +1,6 @@
 # example deps
 node_modules/
 .idea
+
+# Context
+grafana-stack-context.txt

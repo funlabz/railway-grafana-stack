@@ -39,9 +39,15 @@ This template is perfect for teams who need a comprehensive observability soluti
 | `GF_SECURITY_ADMIN_USER` | Username for the Grafana admin account | Required input |
 | `GF_SECURITY_ADMIN_PASSWORD` | Password for the Grafana admin account | Auto-generated secure string |
 | `GF_DEFAULT_INSTANCE_NAME` | Name of your Grafana instance | `Grafana on Railway` |
-| `GF_INSTALL_PLUGINS` | Comma-separated list of Grafana plugins to install | `marcusolsson-json-datasource,grafana-piechart-panel,grafana-worldmap-panel,grafana-clock-panel` |
+| `GF_INSTALL_PLUGINS` | Comma-separated list of Grafana plugins to install | `marcusolsson-json-datasource,grafana-clock-panel` |
 | `POLYBOT_JSON_URL` | Base URL for the Polybot JSON API datasource | `http://polybot:3000/api/status` |
 | `POLYBOT_METRICS_TOKEN` | Bearer token sent as Authorization header to Polybot JSON API | `changeme` |
+| `POLYBOT_SLACK_WEBHOOK_URL` | Incoming webhook URL used by the bundled Slack contact point | `https://hooks.slack.com/services/your/webhook/here` |
+| `POLYBOT_SLACK_CHANNEL` | Slack destination (for example `#polybot-alerts`) for provisioned alerts | `#polybot-alerts` |
+| `POLYBOT_BUSINESS_SLACK_WEBHOOK_URL` | Webhook for business-facing Polybot alerts | `https://hooks.slack.com/services/your/business/webhook` |
+| `POLYBOT_BUSINESS_SLACK_CHANNEL` | Slack destination for business alerts (trades/users) | `#polybot-business-alerts` |
+
+> Grafana 12+ no longer loads legacy Angular plugins, so the default `GF_INSTALL_PLUGINS` list ships only React-based plugins. If you still need Angular plugins (for example `grafana-worldmap-panel`), enable Grafana's Angular compatibility flag manually and add them back to the variable.
 
 ### Internal Service URLs
 
@@ -101,6 +107,10 @@ This template deploys four interconnected services:
 - Persistent volume for storing dashboards, users, and configurations
 - Comes with useful plugins pre-installed
 - Exposes internal URLs for other Railway services to connect to Loki, Prometheus, and Tempo
+
+#### Embedded Alerting
+Grafana now provisions unified alerting resources from `grafana/alerting`. Update `alerts.yml`, `contact-points.yml`, and `notification-policies.yml`, then rebuild the Grafana image (`docker compose up --build grafana`) to version alert rules, contact points, and routing with the rest of the stack. The bundled `Polybot Flow Error Detected` rule evaluates every 30 seconds, looks for the most recent `level = ERROR` row in the `FlowEvent` table within the past two minutes, and fires a single notification per interval. The emitted series encodes the flow, stage, `context.class`, and truncated error message inside the label payload so Slack posts include useful debugging hints without jumping into Grafana. A second `Polybot Trade Executed` rule runs on the same 30-second cadence, joins `TradeExecution` with `User` metadata, and emits a single data point when a trade lands in the last two minutes so you see celebratory alerts with user handle, market, and USD notional baked into the Slack message. A third `Polybot New User Registered` rule also evaluates every 30 seconds, monitors the `User` table for fresh signups in the last two minutes, and lists up to five newest handles so the team can welcome them right from Slack. Slack notifications use a slim custom template so only severity, component, details, and payload strings appear (no `grafana_folder` noise).
+Flow/technical alerts route to `polybot-flow-slack`, which uses `${POLYBOT_SLACK_CHANNEL}` and `${POLYBOT_SLACK_WEBHOOK_URL}`. Business-facing alerts (trades + new users) route to `polybot-trade-slack` / `polybot-user-slack`, which draw from `${POLYBOT_BUSINESS_SLACK_CHANNEL}` and `${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL}`. Override those variables (via `.env` locally or Railway variables in production) before redeploying to point each alert class at the correct workspace destination.
 
 ### Prometheus
 - Time-series database for metrics collection
