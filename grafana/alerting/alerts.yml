@@ -94,7 +94,7 @@ groups:
       - uid: builtin_polybot_trade_activity
         interval: 30s
         title: Polybot Trade Executed
-        condition: E
+        condition: C
         data:
           - refId: D
             relativeTimeRange:
@@ -106,6 +106,7 @@ groups:
                 type: postgres
                 uid: grafana_postgres
               format: table
+              instant: true
               intervalMs: 1000
               maxDataPoints: 43200
               rawSql: |
@@ -133,7 +134,7 @@ groups:
                   trade_value                              AS value         -- the ONLY numeric column
                   FROM recent_trade;
               refId: D
-          - refId: E
+          - refId: reducer
             relativeTimeRange:
               from: 0
               to: 0
@@ -142,7 +143,18 @@ groups:
               datasource:
                 type: __expr__
                 uid: __expr__
-              type: classic_conditions
+              expression: D
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: reducer
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
               conditions:
                 - evaluator:
                     params:
@@ -152,12 +164,19 @@ groups:
                     type: and
                   query:
                     params:
-                      - D
+                      - C
                   reducer:
+                    params: []
                     type: last
                   type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: reducer
               intervalMs: 1000
               maxDataPoints: 43200
+              refId: C
+              type: threshold
         noDataState: OK
         executionErrorState: Error
         for: 0s
