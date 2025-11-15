@@ -168,6 +168,13 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
+          # Pull the "metric" label off the classic condition result (refId E)
+          # This is evaluated by Grafana at alert-runtime and becomes .Annotations.metric
+          metric: '{{- range $k, $v := $values -}}{{- if (hasPrefix $k "E") -}}{{- index $v.Labels "metric" -}}{{- end -}}{{- end -}}'
+
+          # Optional: also capture the numeric decision value if you want to show it
+          decision_value: '{{- range $k, $v := $values -}}{{- if (hasPrefix $k "E") -}}{{- $v.Value -}}{{- end -}}{{- end -}}'
+
           summary: Polybot user executed a trade during the last 2 minutes
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
 

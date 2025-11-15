@@ -59,8 +59,10 @@ contactPoints:
             {{- range .Alerts.Firing }}
             *Polybot Trade Executed*
 
-            Metric: {{ .Labels.metric }}
-            Value: {{ index .Values "E" }}
+            Metric: {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}(metric unavailable){{ end }}
+            {{- if .Annotations.decision_value }}
+            Value: {{ .Annotations.decision_value }}
+            {{- end }}
             Observed At: {{ .StartsAt }}
 
             {{- end }}
