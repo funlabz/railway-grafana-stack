@@ -59,7 +59,7 @@ contactPoints:
             {{- range .Alerts.Firing }}
             *Polybot Trade Executed*
 
-            Metric: {{ .Label.metric }}
+            Metric: {{ .Labels.metric }}
             Value: {{ index .Values "E" }}
             Observed At: {{ .StartsAt }}
 
