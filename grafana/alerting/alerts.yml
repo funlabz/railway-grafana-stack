@@ -168,12 +168,6 @@ groups:
         executionErrorState: Error
         for: 0s
         annotations:
-          # Take the "metric" label from the classic condition E
-          metric: '{{ range $k, $v := $values -}}{{ if (match "E[0-9]+" $k) -}}{{ index $v.Labels "metric" }}{{ end }}{{ end }}'
-
-          # Optional: numeric value from E (0/1 in your case)
-          value: '{{ range $k, $v := $values -}}{{ if (match "E[0-9]+" $k) -}}{{ $v.Value }}{{ end }}{{ end }}'
-
           summary: Polybot user executed a trade during the last 2 minutes
           details: Payload includes user_id, telegram handle, market slug, and USD notional amount
 
