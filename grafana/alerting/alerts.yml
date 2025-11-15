@@ -136,7 +136,6 @@ groups:
                     ' | amount_usd=', TO_CHAR(recent_trade.trade_value, 'FM999999990.999999')
                   ) AS metric,
                   1::double precision AS value
-                  recent_trade.trade_value::double precision AS value
                 FROM recent_trade
                 ORDER BY 1;
               refId: D
