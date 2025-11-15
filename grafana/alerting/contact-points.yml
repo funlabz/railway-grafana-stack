@@ -59,7 +59,9 @@ contactPoints:
             {{- range .Alerts.Firing }}
             *Polybot Trade Executed*
             
-            Amount (USD): {{ printf "%.6f" (index .Values "E") }}
+            Try1: {{ $values.E.metric }}
+            Try2: {{ $values.E.Metric }}
+            Values: {{ (index .Values "E") }}
             Observed At: {{ .StartsAt }}
             
             {{- end }}
