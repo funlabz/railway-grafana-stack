@@ -56,35 +56,14 @@ contactPoints:
           url: "${POLYBOT_BUSINESS_SLACK_WEBHOOK_URL}"
           title: '{{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}Grafana Alert{{ end }}'
           text: |
-            {{- range .Alerts }}
-            *Alert:* {{ if .Labels.alertname }}{{ .Labels.alertname }}{{ else }}Grafana Alert{{ end }}
-            *Severity:* {{ if .Labels.severity }}{{ .Labels.severity }}{{ else }}n/a{{ end }}
-            *Component:* {{ if .Labels.component }}{{ .Labels.component }}{{ else }}n/a{{ end }}
-            {{- if .GeneratorURL }}
-            *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
-            {{- end }}
+            {{ range .Alerts.Firing }}
+            *Polybot Trade Executed*
             
-            *Values:* {{ .Annotations.values}
-        
-
-            {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
-            *Metric:* {{ if .Annotations.metric }}{{ .Annotations.metric }}{{ else }}n/a{{ end }}
-            *Metrics:* {{ .Annotations.metrics }}
-            {{- if .Annotations.value }}
-            *Value:* {{ .Annotations.value }}
-            {{- end }}
-            {{- if .Annotations.time }}
-            *Observed At:* {{ .Annotations.time }}
-            {{- end }}
-            {{- end }}
-
-            {{- if .Annotations.summary }}
-            *Summary:* {{ .Annotations.summary }}
-            {{- end }}
-            {{- if .Annotations.details }}
-            *Details:* {{ .Annotations.details }}
-            {{- end }}
-            {{- end }}
+            Metric: {{ .Annotations.metric }}
+            Value: {{ index .Values "E" }}      
+            Observed At: {{ .StartsAt }}
+          
+            {{ end }}
           color: '{{ if eq .CommonLabels.severity "critical" }}#E02F44{{ else if or (eq .CommonLabels.severity "error") (eq .CommonLabels.severity "warning") }}#FFB347{{ else }}#36A64F{{ end }}'
 
   # -------------------------
