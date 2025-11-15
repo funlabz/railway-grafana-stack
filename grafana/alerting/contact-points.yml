@@ -64,6 +64,7 @@ contactPoints:
             *Alert URL:* <{{ .GeneratorURL }}|Open alert view>
             {{- end }}
             
+            *Values:* {{ .Annotations.values}
         
 
             {{- if or .Annotations.metric .Annotations.value .Annotations.time }}
